@@ -4,8 +4,6 @@
   <em>Where Modbus meets GraphQL — and microcontrollers talk to microservices.</em>
 </p>
 
----
-
 ## About
 
 Built where two worlds meet: industrial automation, where signals from PLCs and microcontrollers move physical things in the real world, and software engineering, where distributed services move bytes across networks at scale. After years working on both sides of that line, this site is an attempt to render the conversation in public — one where Modbus and GraphQL get equal billing, and a SCADA HMI is treated with the same respect as an OAuth flow.
