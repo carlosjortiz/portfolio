@@ -1,43 +1,26 @@
-# Astro Starter Kit: Minimal
+# portfolio
 
-```sh
-pnpm create astro@latest -- --template minimal
-```
+The personal portfolio of Carlos J. Ortiz — built where two worlds meet: industrial automation, where signals from PLCs and microcontrollers move physical things in the real world, and software engineering, where distributed services move bytes across networks at scale. After years working on both sides of that line, this site is an attempt to render the conversation in public — one where Modbus and GraphQL get equal billing, and a SCADA HMI is treated with the same respect as an OAuth flow.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Stack
 
-## 🚀 Project Structure
+- [Astro](https://astro.build) `6.1.9` — content-first framework, ships zero JS by default
+- [Tailwind CSS](https://tailwindcss.com) `4.2.4` — wired through `@tailwindcss/vite`
+- TypeScript with the `astro/tsconfigs/strict` preset
+- Cloudflare Pages (deployment target)
 
-Inside of your Astro project, you'll see the following folders and files:
+## Local development
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+All commands run from the project root.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+| Command          | Action                                              |
+| :--------------- | :-------------------------------------------------- |
+| `pnpm install`   | Install dependencies                                |
+| `pnpm dev`       | Start the dev server at `localhost:4321`            |
+| `pnpm build`     | Build the production site to `./dist/`              |
+| `pnpm preview`   | Preview the build locally before deploying          |
+| `pnpm astro ...` | Run CLI commands like `astro add` or `astro check`  |
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## A note on dependency pinning
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Versions are pinned exactly (no caret) to satisfy a global pnpm `minimum-release-age` policy of seven days. When updating, confirm the new version was published more than a week ago.
