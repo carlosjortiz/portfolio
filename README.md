@@ -1,8 +1,4 @@
-<h1 align="center">portfolio</h1>
-
-<p align="center">
-  The personal portfolio of <strong>Carlos J. Ortiz</strong>
-</p>
+<h1 align="center">The personal portfolio of <strong>Carlos J. Ortiz</strong></h1>
 
 <p align="center">
   <em>Where Modbus meets GraphQL — and microcontrollers talk to microservices.</em>
@@ -27,21 +23,17 @@ Built where two worlds meet: industrial automation, where signals from PLCs and 
   <img alt="TypeScript" src="https://svgl.app/library/typescript.svg" height="44" />
 </p>
 
-- [Astro](https://astro.build) `6.1.9` — content-first framework, ships zero JS by default
-- [Tailwind CSS](https://tailwindcss.com) `4.2.4` — wired through `@tailwindcss/vite`
-- [TypeScript](https://www.typescriptlang.org) — `astro/tsconfigs/strict` preset
-
 ## Local development
 
 All commands run from the project root.
 
-| Command          | Action                                              |
-| :--------------- | :-------------------------------------------------- |
-| `pnpm install`   | Install dependencies                                |
-| `pnpm dev`       | Start the dev server at `localhost:4321`            |
-| `pnpm build`     | Build the production site to `./dist/`              |
-| `pnpm preview`   | Preview the build locally before deploying          |
-| `pnpm astro ...` | Run CLI commands like `astro add` or `astro check`  |
+| Command          | Action                                             |
+| :--------------- | :------------------------------------------------- |
+| `pnpm install`   | Install dependencies                               |
+| `pnpm dev`       | Start the dev server at `localhost:4321`           |
+| `pnpm build`     | Build the production site to `./dist/`             |
+| `pnpm preview`   | Preview the build locally before deploying         |
+| `pnpm astro ...` | Run CLI commands like `astro add` or `astro check` |
 
 ## A note on dependency pinning
 
