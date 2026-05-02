@@ -1,13 +1,35 @@
-# portfolio
+<h1 align="center">portfolio</h1>
 
-The personal portfolio of Carlos J. Ortiz — built where two worlds meet: industrial automation, where signals from PLCs and microcontrollers move physical things in the real world, and software engineering, where distributed services move bytes across networks at scale. After years working on both sides of that line, this site is an attempt to render the conversation in public — one where Modbus and GraphQL get equal billing, and a SCADA HMI is treated with the same respect as an OAuth flow.
+<p align="center">
+  The personal portfolio of <strong>Carlos J. Ortiz</strong>
+</p>
+
+<p align="center">
+  <em>Where Modbus meets GraphQL — and microcontrollers talk to microservices.</em>
+</p>
+
+---
+
+## About
+
+Built where two worlds meet: industrial automation, where signals from PLCs and microcontrollers move physical things in the real world, and software engineering, where distributed services move bytes across networks at scale. After years working on both sides of that line, this site is an attempt to render the conversation in public — one where Modbus and GraphQL get equal billing, and a SCADA HMI is treated with the same respect as an OAuth flow.
 
 ## Stack
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://svgl.app/library/astro-icon-dark.svg" />
+    <img alt="Astro" src="https://svgl.app/library/astro-icon-light.svg" height="44" />
+  </picture>
+  &nbsp;&nbsp;&nbsp;
+  <img alt="Tailwind CSS" src="https://svgl.app/library/tailwindcss.svg" height="44" />
+  &nbsp;&nbsp;&nbsp;
+  <img alt="TypeScript" src="https://svgl.app/library/typescript.svg" height="44" />
+</p>
+
 - [Astro](https://astro.build) `6.1.9` — content-first framework, ships zero JS by default
 - [Tailwind CSS](https://tailwindcss.com) `4.2.4` — wired through `@tailwindcss/vite`
-- TypeScript with the `astro/tsconfigs/strict` preset
-- Cloudflare Pages (deployment target)
+- [TypeScript](https://www.typescriptlang.org) — `astro/tsconfigs/strict` preset
 
 ## Local development
 
