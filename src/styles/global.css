@@ -1,1 +1,45 @@
 @import "tailwindcss";
+
+@theme {
+  /* surfaces */
+  --color-background:        #020408;
+  --color-surface:           #0B0F17;
+  --color-surface-2:         #151B26;
+  --color-border:            #1E293B;
+
+  /* text */
+  --color-text-primary:      #F1F5F9;
+  --color-text-secondary:    #94A3B8;
+  --color-text-muted:        #475569;
+
+  /* accents */
+  --color-accent-primary:    #FB923C;
+  --color-accent-primary-hover: #FCA557;
+  --color-accent-secondary:  #22D3EE;
+
+  /* stars — multi-color, stellar-temperature inspired */
+  --color-star-warm:         #F4E5C8;  /* Sirius-warm white  · A/F-class */
+  --color-star-cool:         #DBE7F5;  /* Vega-cool white    · B-class  */
+  --color-star-amber:        #E8B884;  /* Arcturus amber     · K-class  */
+  --color-star-dim:          #334155;  /* faint background field        */
+
+  /* on-accent foregrounds (text colors over accent backgrounds) */
+  --on-accent-primary:       #1F1207;
+  --on-accent-secondary:     #042F2E;
+  --color-on-accent:         #1A0F04;
+
+  /* semantic states */
+  --color-success:           #10B981;
+  --color-warning:           #F59E0B;
+  --color-danger:            #EF4444;
+  --color-info:              #3B82F6;
+}
+
+@layer base {
+  html, body {
+    background: var(--color-background);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+  body { overflow-x: hidden; }
+}

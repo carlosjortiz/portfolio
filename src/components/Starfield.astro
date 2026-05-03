@@ -1,0 +1,137 @@
+---
+/*
+ * Pure-CSS multi-color starfield.
+ *
+ * Three layered, fixed-position backgrounds:
+ *   - .sky           soft accent-tinted glows (atmosphere)
+ *   - .stars         bright/medium stars in mixed stellar temperatures
+ *                    (warm Sirius-white, cool Vega-blue, amber Arcturus)
+ *   - .stars::before dim faint background field — texture, not sparkle
+ *   - .stars::after  a few halo stars (largest, softly blurred)
+ *
+ * Star color philosophy: real stars are not pure white. Their hue
+ * depends on surface temperature (Stefan–Boltzmann). Mixing warm/cool/amber
+ * gives the sky depth and ties subtly to the accent palette without
+ * shouting at the user.
+ */
+---
+
+<div class="sky" aria-hidden="true"></div>
+<div class="stars" aria-hidden="true"></div>
+
+<style>
+  .sky {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 20%, color-mix(in oklch, var(--color-accent-secondary) 4%, transparent), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 20% 80%, color-mix(in oklch, var(--color-accent-primary) 3%, transparent), transparent 70%);
+  }
+
+  .stars,
+  .stars::before,
+  .stars::after {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ---------- mid layer · bright/medium stars, mixed temperatures ---------- */
+  .stars {
+    background-image:
+      /* warm Sirius-white (A/F-class) */
+      radial-gradient(1px 1px at 8% 14%,    var(--color-star-warm)  50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 22% 19%, var(--color-star-warm) 50%, transparent 100%),
+      radial-gradient(1px 1px at 34% 9%,    var(--color-star-warm)  50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 45% 77%, var(--color-star-warm) 50%, transparent 100%),
+      radial-gradient(1px 1px at 52% 24%,   var(--color-star-warm)  50%, transparent 100%),
+      radial-gradient(1px 1px at 69% 89%,   var(--color-star-warm)  50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 74% 36%, var(--color-star-warm) 50%, transparent 100%),
+      radial-gradient(1px 1px at 5% 73%,    var(--color-star-warm)  50%, transparent 100%),
+      radial-gradient(1px 1px at 89% 73%,   var(--color-star-warm)  50%, transparent 100%),
+
+      /* cool Vega-blue (B-class) */
+      radial-gradient(1px 1px at 15% 32%,   var(--color-star-cool)  50%, transparent 100%),
+      radial-gradient(1px 1px at 38% 43%,   var(--color-star-cool)  50%, transparent 100%),
+      radial-gradient(1px 1px at 63% 12%,   var(--color-star-cool)  50%, transparent 100%),
+      radial-gradient(1px 1px at 79% 60%,   var(--color-star-cool)  50%, transparent 100%),
+      radial-gradient(1px 1px at 93% 41%,   var(--color-star-cool)  50%, transparent 100%),
+
+      /* warm amber (K-class — sparse, stand-out) */
+      radial-gradient(1px 1px at 28% 67%,   var(--color-star-amber) 50%, transparent 100%),
+      radial-gradient(1px 1px at 58% 51%,   var(--color-star-amber) 50%, transparent 100%),
+      radial-gradient(1px 1px at 84% 22%,   var(--color-star-amber) 50%, transparent 100%);
+    opacity: 0.92;
+    animation: twinkle-fast 6s ease-in-out infinite alternate;
+  }
+
+  /* ---------- back layer · dim background field (texture) ---------- */
+  .stars::before {
+    content: "";
+    background-image:
+      radial-gradient(0.5px 0.5px at 3%  47%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 8%  12%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 11% 71%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 14% 38%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 17% 88%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 19% 25%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 24% 56%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 27% 9%,  var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 31% 79%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 36% 17%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 39% 92%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 42% 31%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 47% 64%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 50% 5%,  var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 54% 49%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 57% 81%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 60% 22%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 65% 67%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 68% 14%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 72% 86%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 76% 41%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 81% 7%,  var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 86% 60%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 91% 33%, var(--color-star-dim) 50%, transparent 100%),
+      radial-gradient(0.5px 0.5px at 96% 78%, var(--color-star-dim) 50%, transparent 100%);
+    opacity: 0.65;
+    animation: twinkle-slow 11s ease-in-out infinite alternate;
+  }
+
+  /* ---------- halo layer · a few largest stars softly blurred ---------- */
+  .stars::after {
+    content: "";
+    background-image:
+      radial-gradient(2px 2px at 24% 28%, var(--color-star-warm)  30%, transparent 70%),
+      radial-gradient(2px 2px at 61% 18%, var(--color-star-cool)  30%, transparent 70%),
+      radial-gradient(2px 2px at 76% 78%, var(--color-star-amber) 30%, transparent 70%),
+      radial-gradient(2px 2px at 12% 56%, var(--color-star-warm)  30%, transparent 70%);
+    opacity: 0.45;
+    filter: blur(0.4px);
+    animation: twinkle-halo 14s ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle-fast {
+    from { opacity: 0.78; }
+    to   { opacity: 1;    }
+  }
+  @keyframes twinkle-slow {
+    from { opacity: 0.5; }
+    to   { opacity: 0.75; }
+  }
+  @keyframes twinkle-halo {
+    from { opacity: 0.32; }
+    to   { opacity: 0.55; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stars,
+    .stars::before,
+    .stars::after {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,412 @@
+---
+// Constellation of stack icons: hardware tribe (left, copper) and
+// software tribe (right, cyan), bridged by a single Modbus<->GraphQL line.
+// Data is intentionally hardcoded — this is a portfolio's "stack catalog",
+// not a CMS-driven list.
+---
+
+<svg class="lines" viewBox="0 0 1000 625" preserveAspectRatio="none" aria-hidden="true">
+  <polyline class="ln-hardware" points="80,180 165,95 220,260 130,360 250,440" />
+  <line class="ln-hardware" x1="220" y1="260" x2="250" y2="440" />
+
+  <polyline class="ln-software" points="780,140 870,230 830,380 720,440 920,520" />
+  <line class="ln-software" x1="830" y1="380" x2="920" y2="520" />
+
+  <line class="ln-bridge" x1="165" y1="95" x2="780" y2="140" />
+  <line class="ln-bridge" x1="250" y1="440" x2="720" y2="440" />
+</svg>
+
+<div class="constellation">
+  <a class="star tribe-hw mag-2 sz-md" style="top: 28.8%; left: 8%;" href="#" aria-label="PLC">
+    <span class="glyph">PLC<span class="twinkle"></span></span>
+    <span class="catalog">
+      <span class="row1"><span class="name">PLC</span><span class="mag">m 2.1</span></span>
+      <span class="cat-coord">14h 02m · +38°</span>
+      <span class="cat">controllers</span>
+    </span>
+  </a>
+
+  <a class="star tribe-hw mag-1 sz-xl" style="top: 15.2%; left: 16.5%;" href="#" aria-label="Modbus">
+    <span class="glyph">Mb<span class="twinkle"></span></span>
+    <span class="catalog">
+      <span class="row1"><span class="name">Modbus</span><span class="mag">m 0.4</span></span>
+      <span class="cat-coord">14h 18m · +44°</span>
+      <span class="cat">protocols</span>
+    </span>
+  </a>
+
+  <a class="star tribe-hw mag-3 sz-sm" style="top: 41.6%; left: 22%;" href="#" aria-label="Microcontroller">
+    <span class="glyph">μC</span>
+    <span class="catalog">
+      <span class="row1"><span class="name">Microcontroller</span><span class="mag">m 3.0</span></span>
+      <span class="cat-coord">14h 41m · +24°</span>
+      <span class="cat">embedded</span>
+    </span>
+  </a>
+
+  <a class="star tribe-hw mag-2 sz-md hide-sm" style="top: 57.6%; left: 13%;" href="#" aria-label="IEC 60870">
+    <span class="glyph">IEC<span class="twinkle"></span></span>
+    <span class="catalog">
+      <span class="row1"><span class="name">IEC 60870</span><span class="mag">m 1.8</span></span>
+      <span class="cat-coord">15h 04m · +12°</span>
+      <span class="cat">scada-protocol</span>
+    </span>
+  </a>
+
+  <a class="star tribe-hw mag-3 sz-sm" style="top: 70.4%; left: 25%;" href="#" aria-label="SCADA">
+    <span class="glyph">SC</span>
+    <span class="catalog">
+      <span class="row1"><span class="name">SCADA</span><span class="mag">m 2.6</span></span>
+      <span class="cat-coord">15h 22m · −04°</span>
+      <span class="cat">supervisory</span>
+    </span>
+  </a>
+
+  <a class="star tribe-hw mag-4 sz-xs hide-sm" style="top: 86%; left: 9%;" href="#" aria-label="Sensors">
+    <span class="glyph">∿</span>
+    <span class="catalog">
+      <span class="row1"><span class="name">Sensors</span><span class="mag">m 4.2</span></span>
+      <span class="cat-coord">15h 48m · −18°</span>
+      <span class="cat">analog-i/o</span>
+    </span>
+  </a>
+
+  <a class="star tribe-sw mag-2 sz-md" style="top: 22.4%; left: 78%;" href="#" aria-label="Rust">
+    <span class="glyph">Rs<span class="twinkle"></span></span>
+    <span class="catalog">
+      <span class="row1"><span class="name">Rust</span><span class="mag">m 1.5</span></span>
+      <span class="cat-coord">17h 12m · +36°</span>
+      <span class="cat">systems-lang</span>
+    </span>
+  </a>
+
+  <a class="star tribe-sw mag-1 sz-xl" style="top: 36.8%; left: 87%;" href="#" aria-label="GraphQL">
+    <span class="glyph">Gq<span class="twinkle"></span></span>
+    <span class="catalog">
+      <span class="row1"><span class="name">GraphQL</span><span class="mag">m 0.6</span></span>
+      <span class="cat-coord">17h 38m · +18°</span>
+      <span class="cat">api-runtime</span>
+    </span>
+  </a>
+
+  <a class="star tribe-sw mag-3 sz-sm" style="top: 60.8%; left: 83%;" href="#" aria-label="Postgres">
+    <span class="glyph">Pg</span>
+    <span class="catalog">
+      <span class="row1"><span class="name">Postgres</span><span class="mag">m 2.4</span></span>
+      <span class="cat-coord">18h 02m · −02°</span>
+      <span class="cat">datastore</span>
+    </span>
+  </a>
+
+  <a class="star tribe-sw mag-2 sz-md hide-sm" style="top: 70.4%; left: 72%;" href="#" aria-label="OAuth 2">
+    <span class="glyph">OA<span class="twinkle"></span></span>
+    <span class="catalog">
+      <span class="row1"><span class="name">OAuth 2</span><span class="mag">m 1.9</span></span>
+      <span class="cat-coord">18h 21m · −12°</span>
+      <span class="cat">identity</span>
+    </span>
+  </a>
+
+  <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 83.2%; left: 92%;" href="#" aria-label="TypeScript">
+    <span class="glyph">Ts</span>
+    <span class="catalog">
+      <span class="row1"><span class="name">TypeScript</span><span class="mag">m 3.7</span></span>
+      <span class="cat-coord">18h 44m · −22°</span>
+      <span class="cat">app-lang</span>
+    </span>
+  </a>
+
+  <a class="star tribe-neu mag-3 sz-xs" style="top: 9.6%; left: 50%;" href="#" aria-label="Edge gateway">
+    <span class="glyph">⌬</span>
+    <span class="catalog">
+      <span class="row1"><span class="name">Edge gateway</span><span class="mag">m 2.9</span></span>
+      <span class="cat-coord">16h 00m · +50°</span>
+      <span class="cat">bridge</span>
+    </span>
+  </a>
+
+  <a class="star tribe-neu mag-4 sz-xs hide-sm" style="top: 93.6%; left: 50%;" href="#" aria-label="Telemetry">
+    <span class="glyph">◎</span>
+    <span class="catalog">
+      <span class="row1"><span class="name">Telemetry</span><span class="mag">m 4.0</span></span>
+      <span class="cat-coord">16h 00m · −26°</span>
+      <span class="cat">observability</span>
+    </span>
+  </a>
+</div>
+
+<style>
+  .lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .lines line, .lines polyline {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /*
+   * Line opacities are intentionally low: the constellation lines should hint
+   * at relationships, not compete with the icons or headline. The bridge line
+   * (Modbus <-> GraphQL) is slightly more visible because it carries the
+   * tagline narrative — without it the "where Modbus meets GraphQL" idea
+   * loses its visual anchor.
+   */
+  .lines .ln-hardware {
+    stroke: var(--color-accent-primary);
+    opacity: 0.08;
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
+  }
+  .lines .ln-software {
+    stroke: var(--color-accent-secondary);
+    opacity: 0.08;
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
+  }
+  .lines .ln-bridge {
+    stroke: var(--color-text-secondary);
+    opacity: 0.14;
+    stroke-width: 1;
+    stroke-dasharray: 1 6;
+  }
+
+  .constellation {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+  }
+
+  .star {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    --halo: color-mix(in oklch, var(--color-star-warm) 50%, transparent);
+    --tone: var(--color-star-warm);
+    text-decoration: none;
+  }
+
+  .star.mag-1 { animation: drift1 11s ease-in-out infinite; }
+  .star.mag-2 { animation: drift2 13s ease-in-out infinite; }
+  .star.mag-3 { animation: drift3 9s  ease-in-out infinite; }
+  .star.mag-4 { animation: drift4 14s ease-in-out infinite; }
+
+  @keyframes drift1 {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50%      { transform: translate(-50%, -50%) translateY(-6px); }
+  }
+  @keyframes drift2 {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50%      { transform: translate(-50%, -50%) translateY(5px); }
+  }
+  @keyframes drift3 {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50%      { transform: translate(-50%, -50%) translateY(-4px); }
+  }
+  @keyframes drift4 {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50%      { transform: translate(-50%, -50%) translateY(3px); }
+  }
+
+  .star .glyph {
+    position: relative;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    transition:
+      transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      border-color 0.3s,
+      box-shadow 0.4s,
+      background 0.3s;
+  }
+
+  .star.sz-xl .glyph { width: 56px; height: 56px; font-size: 16px; border-radius: 12px; }
+  .star.sz-lg .glyph { width: 48px; height: 48px; font-size: 14px; border-radius: 10px; }
+  .star.sz-md .glyph { width: 40px; height: 40px; font-size: 12px; }
+  .star.sz-sm .glyph { width: 32px; height: 32px; font-size: 11px; border-radius: 6px; }
+  .star.sz-xs .glyph { width: 26px; height: 26px; font-size: 10px; border-radius: 5px; }
+
+  .star.mag-1 .glyph {
+    opacity: 1.0;
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--color-text-primary) 2%, transparent),
+      0 4px 24px -8px color-mix(in oklch, var(--color-background) 60%, transparent);
+  }
+  .star.mag-2 .glyph { opacity: 0.92; }
+  .star.mag-3 .glyph { opacity: 0.78; }
+  .star.mag-4 .glyph { opacity: 0.55; }
+
+  .star.tribe-hw .glyph {
+    color: var(--color-accent-primary);
+    --halo: color-mix(in oklch, var(--color-accent-primary) 55%, transparent);
+  }
+  .star.tribe-sw .glyph {
+    color: var(--color-accent-secondary);
+    --halo: color-mix(in oklch, var(--color-accent-secondary) 50%, transparent);
+  }
+  .star.tribe-neu .glyph {
+    color: var(--color-text-secondary);
+    --halo: color-mix(in oklch, var(--color-star-warm) 40%, transparent);
+  }
+
+  .star .glyph::before {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: inherit;
+    background: radial-gradient(circle at center, var(--halo), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    z-index: -1;
+    filter: blur(6px);
+  }
+
+  .star:hover .glyph,
+  .star:focus-visible .glyph {
+    transform: scale(1.08);
+    border-color: currentColor;
+    background: var(--color-surface-2);
+    opacity: 1;
+  }
+  .star:hover .glyph::before,
+  .star:focus-visible .glyph::before {
+    opacity: 1;
+  }
+
+  .catalog {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    min-width: 168px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 28px -8px color-mix(in oklch, var(--color-background) 70%, transparent);
+    display: block;
+  }
+  .catalog::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    background: var(--color-surface);
+    border-left: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border);
+  }
+  .star:hover .catalog,
+  .star:focus-visible .catalog {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+  .catalog .row1 {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .catalog .name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+  }
+  .catalog .mag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--color-text-muted);
+    letter-spacing: 0.1em;
+  }
+  .catalog .cat-coord {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+  .catalog .cat {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+  .star.tribe-hw .catalog .cat {
+    color: var(--color-accent-primary);
+    border-color: color-mix(in oklch, var(--color-accent-primary) 30%, transparent);
+  }
+  .star.tribe-sw .catalog .cat {
+    color: var(--color-accent-secondary);
+    border-color: color-mix(in oklch, var(--color-accent-secondary) 30%, transparent);
+  }
+  .star.tribe-neu .catalog .cat {
+    color: var(--color-text-secondary);
+    border-color: var(--color-border);
+  }
+
+  .star .twinkle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: var(--color-star-warm);
+    top: 4px;
+    right: 4px;
+    box-shadow: 0 0 4px var(--color-star-warm);
+    opacity: 0.6;
+    animation: twinkle 4s ease-in-out infinite;
+  }
+  .star.tribe-sw .twinkle {
+    background: var(--color-star-cool);
+    box-shadow: 0 0 4px var(--color-star-cool);
+  }
+  .star.tribe-hw .twinkle {
+    background: var(--color-star-amber);
+    box-shadow: 0 0 4px var(--color-star-amber);
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.25; transform: scale(0.85); }
+    50%      { opacity: 0.85; transform: scale(1.1); }
+  }
+  .star.mag-3 .twinkle, .star.mag-4 .twinkle { display: none; }
+
+  @media (max-width: 760px) {
+    .star.hide-sm { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .star,
+    .star .twinkle {
+      animation: none;
+    }
+    .star .glyph {
+      transition: none;
+    }
+  }
+</style>

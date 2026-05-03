@@ -1,0 +1,64 @@
+<nav class="site-header">
+  <div class="mark">
+    <span class="glyph" aria-hidden="true"></span>
+    <span>cjo · observatory</span>
+  </div>
+  <div class="links">
+    <a href="#work">work</a>
+    <a href="#stack">stack</a>
+    <a href="#writing">writing</a>
+    <a href="#contact">contact</a>
+  </div>
+</nav>
+
+<style>
+  .site-header {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 48px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+  }
+  .mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-text-secondary);
+  }
+  .mark .glyph {
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--color-accent-primary);
+    border-radius: 50%;
+    position: relative;
+  }
+  .mark .glyph::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    background: var(--color-accent-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 8px color-mix(in oklch, var(--color-accent-primary) 60%, transparent);
+  }
+  .links {
+    display: flex;
+    gap: 28px;
+    color: var(--color-text-muted);
+  }
+  .links a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .links a:hover {
+    color: var(--color-text-primary);
+  }
+
+  @media (max-width: 760px) {
+    .site-header { padding: 20px 24px; }
+  }
+</style>

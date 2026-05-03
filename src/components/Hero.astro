@@ -1,0 +1,153 @@
+---
+import ChartFrame from "./ChartFrame.astro";
+import Constellation from "./Constellation.astro";
+---
+
+<section class="hero">
+  <div class="hero-stage">
+    <ChartFrame />
+    <Constellation />
+
+    <div class="hero-text">
+      <div class="eyebrow">PERSONAL PORTFOLIO · CARLOS J. ORTIZ</div>
+      <h1>
+        Where <span class="accent">Modbus</span> meets <span class="accent">GraphQL</span> &mdash; and microcontrollers talk to microservices.
+      </h1>
+      <p class="lede">
+        Half automation engineer, half senior software engineer. I write Rust services that talk to PLCs over Modbus.
+      </p>
+      <div class="cta-row">
+        <a class="cta primary" href="#work">View work <span class="arrow">&rarr;</span></a>
+        <a class="cta ghost" href="#stack">Explore the stack <span class="arrow">&#x2197;</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    z-index: 2;
+    min-height: calc(100vh - 76px);
+    display: grid;
+    place-items: center;
+    padding: 40px 24px 80px;
+  }
+  .hero-stage {
+    position: relative;
+    width: 100%;
+    max-width: 1240px;
+    aspect-ratio: 16 / 10;
+    max-height: 78vh;
+  }
+
+  .hero-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    width: min(720px, 78%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .hero-text > * { pointer-events: auto; }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--color-text-muted);
+    margin-bottom: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: "";
+    width: 24px;
+    height: 1px;
+    background: var(--color-border);
+  }
+
+  h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: clamp(28px, 4.4vw, 56px);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    margin: 0 0 24px;
+    color: var(--color-text-primary);
+    text-wrap: balance;
+  }
+  h1 .accent {
+    color: var(--color-accent-primary);
+    font-weight: 500;
+  }
+
+  .lede {
+    font-size: clamp(14px, 1.2vw, 16px);
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    max-width: 540px;
+    margin: 0 auto 36px;
+    text-wrap: pretty;
+  }
+
+  .cta-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .cta {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cta.primary {
+    background: var(--color-accent-primary);
+    color: var(--color-on-accent);
+  }
+  .cta.primary:hover {
+    background: var(--color-accent-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px -8px color-mix(in oklch, var(--color-accent-primary) 50%, transparent);
+  }
+  .cta.ghost {
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    background: transparent;
+  }
+  .cta.ghost:hover {
+    color: var(--color-accent-secondary);
+    border-color: color-mix(in oklch, var(--color-accent-secondary) 30%, transparent);
+  }
+  .cta .arrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    transition: transform 0.25s;
+  }
+  .cta:hover .arrow {
+    transform: translateX(2px);
+  }
+
+  @media (max-width: 760px) {
+    .hero-stage {
+      aspect-ratio: 4 / 5;
+      max-height: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta, .cta .arrow {
+      transition: none;
+    }
+  }
+</style>
