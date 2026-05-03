@@ -11,14 +11,9 @@ Built where two worlds meet: industrial automation, where signals from PLCs and 
 ## Stack
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://svgl.app/library/astro-icon-dark.svg" />
-    <img alt="Astro" src="https://svgl.app/library/astro-icon-light.svg" height="44" />
-  </picture>
-  &nbsp;&nbsp;&nbsp;
-  <img alt="Tailwind CSS" src="https://svgl.app/library/tailwindcss.svg" height="44" />
-  &nbsp;&nbsp;&nbsp;
-  <img alt="TypeScript" src="https://svgl.app/library/typescript.svg" height="44" />
+  <a href="https://go-skill-icons.vercel.app/">
+    <img src="https://go-skill-icons.vercel.app/api/icons?i=astro,tailwindcss,typescript&perline=3" alt="Stack: Astro, Tailwind CSS, TypeScript" />
+  </a>
 </p>
 
 ## Local development
