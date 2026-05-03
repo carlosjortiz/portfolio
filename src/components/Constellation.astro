@@ -1,136 +1,159 @@
 ---
-// Constellation of stack icons: hardware tribe (left, copper) and
-// software tribe (right, cyan), bridged by a single Modbus<->GraphQL line.
-// Data is intentionally hardcoded — this is a portfolio's "stack catalog",
-// not a CMS-driven list.
+// Constellation of stack icons: hardware tribe (left, copper), software tribe
+// (right, cyan), and two apex anchors (.Nt at top, Ax at bottom). Letter-marks
+// only — no real logos — keeping the catalog feel of an astronomical chart.
+//
+// The bridge polyline crosses three points: industrial protocols (left) ->
+// .NET (apex) -> JetBrains (right), tracing the actual arc of Carlos's
+// career rather than a literal tagline reference.
 ---
 
 <svg class="lines" viewBox="0 0 1000 625" preserveAspectRatio="none" aria-hidden="true">
-  <polyline class="ln-hardware" points="80,180 165,95 220,260 130,360 250,440" />
-  <line class="ln-hardware" x1="220" y1="260" x2="250" y2="440" />
+  <polyline class="ln-hardware" points="40,350 190,275 220,475" />
+  <line class="ln-hardware" x1="150" y1="200" x2="190" y2="275" />
+  <line class="ln-hardware" x1="150" y1="200" x2="220" y2="88" />
+  <line class="ln-hardware" x1="220" y1="88" x2="500" y2="75" />
+  <line class="ln-hardware" x1="90" y1="537" x2="40" y2="350" />
+  <line class="ln-hardware" x1="90" y1="537" x2="220" y2="475" />
 
-  <polyline class="ln-software" points="780,140 870,230 830,380 720,440 920,520" />
-  <line class="ln-software" x1="830" y1="380" x2="920" y2="520" />
-
-  <line class="ln-bridge" x1="165" y1="95" x2="780" y2="140" />
-  <line class="ln-bridge" x1="250" y1="440" x2="720" y2="440" />
+  <polyline class="ln-software" points="880,200 960,312 880,500 780,400 880,200" />
+  <line class="ln-software" x1="880" y1="200" x2="740" y2="112" />
+  <line class="ln-software" x1="740" y1="112" x2="500" y2="75" />
 </svg>
 
 <div class="constellation">
-  <a class="star tribe-hw mag-2 sz-md" style="top: 28.8%; left: 8%;" href="#" aria-label="PLC">
+  <a class="star tribe-neu mag-1 sz-xl" style="top: 12%; left: 50%;" href="#" aria-label=".NET">
+    <span class="glyph">.Nt<span class="twinkle"></span></span>
+    <span class="catalog">
+      <span class="row1"><span class="name">.NET</span><span class="mag">m 0.3</span></span>
+      <span class="cat-coord">16h 00m · +58°</span>
+      <span class="cat">bridge-tech</span>
+    </span>
+  </a>
+
+  <a class="star tribe-hw mag-3 sz-sm" style="top: 24%; left: 6%;" href="#" aria-label="IoT">
+    <span class="glyph">IoT</span>
+    <span class="catalog">
+      <span class="row1"><span class="name">Internet of Things</span><span class="mag">m 2.7</span></span>
+      <span class="cat-coord">14h 11m · +52°</span>
+      <span class="cat">domain</span>
+    </span>
+  </a>
+
+  <a class="star tribe-hw mag-2 sz-md" style="top: 56%; left: 4%;" href="#" aria-label="PLC">
     <span class="glyph">PLC<span class="twinkle"></span></span>
     <span class="catalog">
-      <span class="row1"><span class="name">PLC</span><span class="mag">m 2.1</span></span>
-      <span class="cat-coord">14h 02m · +38°</span>
-      <span class="cat">controllers</span>
+      <span class="row1"><span class="name">Programmable Logic Controller</span><span class="mag">m 1.9</span></span>
+      <span class="cat-coord">13h 47m · +41°</span>
+      <span class="cat">hardware</span>
     </span>
   </a>
 
-  <a class="star tribe-hw mag-1 sz-xl" style="top: 15.2%; left: 16.5%;" href="#" aria-label="Modbus">
-    <span class="glyph">Mb<span class="twinkle"></span></span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Modbus</span><span class="mag">m 0.4</span></span>
-      <span class="cat-coord">14h 18m · +44°</span>
-      <span class="cat">protocols</span>
-    </span>
-  </a>
-
-  <a class="star tribe-hw mag-3 sz-sm" style="top: 41.6%; left: 22%;" href="#" aria-label="Microcontroller">
+  <a class="star tribe-hw mag-3 sz-sm" style="top: 14%; left: 22%;" href="#" aria-label="Microcontroller">
     <span class="glyph">μC</span>
     <span class="catalog">
       <span class="row1"><span class="name">Microcontroller</span><span class="mag">m 3.0</span></span>
-      <span class="cat-coord">14h 41m · +24°</span>
-      <span class="cat">embedded</span>
+      <span class="cat-coord">14h 34m · +28°</span>
+      <span class="cat">hardware</span>
     </span>
   </a>
 
-  <a class="star tribe-hw mag-2 sz-md hide-sm" style="top: 57.6%; left: 13%;" href="#" aria-label="IEC 60870">
-    <span class="glyph">IEC<span class="twinkle"></span></span>
+  <a class="star tribe-hw mag-1 sz-xl" style="top: 44%; left: 19%;" href="#" aria-label="Industrial protocols">
+    <span class="glyph">⇄<span class="twinkle"></span></span>
     <span class="catalog">
-      <span class="row1"><span class="name">IEC 60870</span><span class="mag">m 1.8</span></span>
-      <span class="cat-coord">15h 04m · +12°</span>
-      <span class="cat">scada-protocol</span>
+      <span class="row1"><span class="name">Industrial protocols</span><span class="mag">m 0.7</span></span>
+      <span class="cat-coord">14h 58m · +14°</span>
+      <span class="cat">Modbus · IEC 60870 · OPC UA · Profibus</span>
     </span>
   </a>
 
-  <a class="star tribe-hw mag-3 sz-sm" style="top: 70.4%; left: 25%;" href="#" aria-label="SCADA">
-    <span class="glyph">SC</span>
+  <a class="star tribe-hw mag-4 sz-xs hide-sm" style="top: 32%; left: 15%;" href="#" aria-label="Home automation">
+    <span class="glyph">Home</span>
     <span class="catalog">
-      <span class="row1"><span class="name">SCADA</span><span class="mag">m 2.6</span></span>
-      <span class="cat-coord">15h 22m · −04°</span>
-      <span class="cat">supervisory</span>
+      <span class="row1"><span class="name">Home automation</span><span class="mag">m 4.1</span></span>
+      <span class="cat-coord">15h 19m · +02°</span>
+      <span class="cat">domain</span>
+    </span>
+  </a>
+
+  <a class="star tribe-hw mag-1 sz-xl" style="top: 76%; left: 22%;" href="#" aria-label="SCADA">
+    <span class="glyph">SCADA<span class="twinkle"></span></span>
+    <span class="catalog">
+      <span class="row1"><span class="name">Supervisory Control and Data Acquisition</span><span class="mag">m 0.9</span></span>
+      <span class="cat-coord">15h 36m · −09°</span>
+      <span class="cat">systems</span>
     </span>
   </a>
 
   <a class="star tribe-hw mag-4 sz-xs hide-sm" style="top: 86%; left: 9%;" href="#" aria-label="Sensors">
     <span class="glyph">∿</span>
     <span class="catalog">
-      <span class="row1"><span class="name">Sensors</span><span class="mag">m 4.2</span></span>
+      <span class="row1"><span class="name">Sensor</span><span class="mag">m 4.2</span></span>
       <span class="cat-coord">15h 48m · −18°</span>
       <span class="cat">analog-i/o</span>
     </span>
   </a>
 
-  <a class="star tribe-sw mag-2 sz-md" style="top: 22.4%; left: 78%;" href="#" aria-label="Rust">
-    <span class="glyph">Rs<span class="twinkle"></span></span>
+  <a class="star tribe-sw mag-3 sz-sm" style="top: 32%; left: 88%;" href="#" aria-label="Zed">
+    <span class="glyph">Zd</span>
     <span class="catalog">
-      <span class="row1"><span class="name">Rust</span><span class="mag">m 1.5</span></span>
-      <span class="cat-coord">17h 12m · +36°</span>
-      <span class="cat">systems-lang</span>
+      <span class="row1"><span class="name">Zed</span><span class="mag">m 2.8</span></span>
+      <span class="cat-coord">17h 04m · +47°</span>
+      <span class="cat">editor</span>
     </span>
   </a>
 
-  <a class="star tribe-sw mag-1 sz-xl" style="top: 36.8%; left: 87%;" href="#" aria-label="GraphQL">
-    <span class="glyph">Gq<span class="twinkle"></span></span>
+  <a class="star tribe-sw mag-2 sz-md" style="top: 50%; left: 96%;" href="#" aria-label="GitHub">
+    <span class="glyph">Gh<span class="twinkle"></span></span>
     <span class="catalog">
-      <span class="row1"><span class="name">GraphQL</span><span class="mag">m 0.6</span></span>
-      <span class="cat-coord">17h 38m · +18°</span>
-      <span class="cat">api-runtime</span>
+      <span class="row1"><span class="name">GitHub</span><span class="mag">m 1.6</span></span>
+      <span class="cat-coord">17h 29m · +33°</span>
+      <span class="cat">platform</span>
     </span>
   </a>
 
-  <a class="star tribe-sw mag-3 sz-sm" style="top: 60.8%; left: 83%;" href="#" aria-label="Postgres">
-    <span class="glyph">Pg</span>
+  <a class="star tribe-sw mag-3 sz-sm" style="top: 8%; left: 88%;" href="#" aria-label="Insomnia">
+    <span class="glyph">Is</span>
     <span class="catalog">
-      <span class="row1"><span class="name">Postgres</span><span class="mag">m 2.4</span></span>
-      <span class="cat-coord">18h 02m · −02°</span>
-      <span class="cat">datastore</span>
+      <span class="row1"><span class="name">Insomnia</span><span class="mag">m 2.9</span></span>
+      <span class="cat-coord">17h 51m · +21°</span>
+      <span class="cat">api-client</span>
     </span>
   </a>
 
-  <a class="star tribe-sw mag-2 sz-md hide-sm" style="top: 70.4%; left: 72%;" href="#" aria-label="OAuth 2">
-    <span class="glyph">OA<span class="twinkle"></span></span>
+  <a class="star tribe-sw mag-1 sz-xl" style="top: 18%; left: 74%;" href="#" aria-label="JetBrains">
+    <span class="glyph">JB<span class="twinkle"></span></span>
     <span class="catalog">
-      <span class="row1"><span class="name">OAuth 2</span><span class="mag">m 1.9</span></span>
-      <span class="cat-coord">18h 21m · −12°</span>
-      <span class="cat">identity</span>
+      <span class="row1"><span class="name">JetBrains Suite</span><span class="mag">m 0.5</span></span>
+      <span class="cat-coord">18h 12m · +12°</span>
+      <span class="cat">Rider · IntelliJ · WebStorm</span>
     </span>
   </a>
 
-  <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 83.2%; left: 92%;" href="#" aria-label="TypeScript">
-    <span class="glyph">Ts</span>
+  <a class="star tribe-sw mag-2 sz-md" style="top: 64%; left: 78%;" href="#" aria-label="Git">
+    <span class="glyph">Gt<span class="twinkle"></span></span>
     <span class="catalog">
-      <span class="row1"><span class="name">TypeScript</span><span class="mag">m 3.7</span></span>
-      <span class="cat-coord">18h 44m · −22°</span>
-      <span class="cat">app-lang</span>
+      <span class="row1"><span class="name">Git</span><span class="mag">m 1.8</span></span>
+      <span class="cat-coord">18h 36m · −03°</span>
+      <span class="cat">vcs</span>
     </span>
   </a>
 
-  <a class="star tribe-neu mag-3 sz-xs" style="top: 9.6%; left: 50%;" href="#" aria-label="Edge gateway">
-    <span class="glyph">⌬</span>
+  <a class="star tribe-sw mag-2 sz-md hide-sm" style="top: 80%; left: 88%;" href="#" aria-label="Docker">
+    <span class="glyph">Dk<span class="twinkle"></span></span>
     <span class="catalog">
-      <span class="row1"><span class="name">Edge gateway</span><span class="mag">m 2.9</span></span>
-      <span class="cat-coord">16h 00m · +50°</span>
-      <span class="cat">bridge</span>
+      <span class="row1"><span class="name">Docker</span><span class="mag">m 2.0</span></span>
+      <span class="cat-coord">19h 02m · −16°</span>
+      <span class="cat">containers</span>
     </span>
   </a>
 
-  <a class="star tribe-neu mag-4 sz-xs hide-sm" style="top: 93.6%; left: 50%;" href="#" aria-label="Telemetry">
-    <span class="glyph">◎</span>
+  <a class="star tribe-neu mag-3 sz-sm" style="top: 92%; left: 50%;" href="#" aria-label="Arch Linux">
+    <span class="glyph">Ax</span>
     <span class="catalog">
-      <span class="row1"><span class="name">Telemetry</span><span class="mag">m 4.0</span></span>
-      <span class="cat-coord">16h 00m · −26°</span>
-      <span class="cat">observability</span>
+      <span class="row1"><span class="name">Arch Linux</span><span class="mag">m 2.5</span></span>
+      <span class="cat-coord">16h 00m · −28°</span>
+      <span class="cat">operating-system</span>
     </span>
   </a>
 </div>
@@ -151,11 +174,10 @@
   }
 
   /*
-   * Line opacities are intentionally low: the constellation lines should hint
-   * at relationships, not compete with the icons or headline. The bridge line
-   * (Modbus <-> GraphQL) is slightly more visible because it carries the
-   * tagline narrative — without it the "where Modbus meets GraphQL" idea
-   * loses its visual anchor.
+   * Tribe lines stay near-invisible — they hint at relationships, never
+   * compete with marks or headline. The bridge is slightly more visible
+   * because it carries the narrative arc: industrial protocols -> .NET
+   * -> JetBrains, the actual through-line of Carlos's career.
    */
   .lines .ln-hardware {
     stroke: var(--color-accent-primary);
