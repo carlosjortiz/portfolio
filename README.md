@@ -1,4 +1,4 @@
-<h1 align="center">The personal portfolio of <strong>Carlos J. Ortiz</strong></h1>
+<h1 align="center">My personal portfolio</h1>
 
 <p align="center">
   <em>Where Modbus meets GraphQL — and microcontrollers talk to microservices.</em>
