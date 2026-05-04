@@ -1,8 +1,8 @@
 <nav class="site-header">
-  <div class="mark">
+  <a class="mark" href="/" aria-label="Go to home">
     <span class="glyph" aria-hidden="true"></span>
     <span>cjo · observatory</span>
-  </div>
+  </a>
   <div class="links">
     <a href="#work">work</a>
     <a href="#projects">projects</a>
@@ -27,6 +27,11 @@
     align-items: center;
     gap: 10px;
     color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .mark:hover {
+    color: var(--color-text-primary);
   }
   .mark .glyph {
     width: 18px;
