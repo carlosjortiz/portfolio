@@ -234,9 +234,21 @@ const planets: Planet[] = [
                     <div class="giant-ring outer"></div>
                     <div class="giant-ring mid"></div>
                     <div class="giant-ring inner"></div>
+                    <span class="ring-orbiter"></span>
                   </div>
                   <div class="giant-atm"></div>
                   <div class="giant-body"></div>
+                  {/* Duplicate ring layer painted ABOVE the body, clipped to its
+                      bottom half. After the −18° rotation, that clipped strip
+                      reads as the ring's "front" arc wrapping in front of the
+                      planet, while the original layer below renders as the
+                      back arc passing behind it. */}
+                  <div class="giant-rings front">
+                    <div class="giant-ring outer"></div>
+                    <div class="giant-ring mid"></div>
+                    <div class="giant-ring inner"></div>
+                    <span class="ring-orbiter"></span>
+                  </div>
                 </>
               )}
 
@@ -356,7 +368,8 @@ const planets: Planet[] = [
     inset: 0;
   }
 
-  /* ----------- TREEW · emission nebula (muted) ----------- */
+  /* ----------- TREEW · emission nebula ----------- */
+  /* rgba literals match Claude Design source verbatim — preserves the exact perceptual mix that color-mix in oklch slightly differs from. */
   .xstar.treew .neb-core {
     position: absolute;
     inset: 32%;
@@ -364,8 +377,8 @@ const planets: Planet[] = [
     background:
       radial-gradient(circle at 50% 50%,
         var(--color-star-warm) 0%,
-        var(--color-star-amber) 30%,
-        color-mix(in oklch, var(--color-star-amber) 0%, transparent) 65%);
+        var(--color-accent-primary) 25%,
+        rgba(251, 146, 60, 0.0) 60%);
     filter: blur(2px);
     z-index: 3;
     animation: neb-pulse 7s ease-in-out infinite;
@@ -375,15 +388,9 @@ const planets: Planet[] = [
     inset: 0;
     border-radius: 50%;
     background:
-      radial-gradient(circle at 38% 42%,
-        color-mix(in oklch, var(--color-star-amber) 32%, transparent) 0%,
-        transparent 38%),
-      radial-gradient(circle at 64% 58%,
-        color-mix(in oklch, var(--color-accent-secondary) 18%, transparent) 0%,
-        transparent 42%),
-      radial-gradient(circle at 50% 50%,
-        color-mix(in oklch, var(--color-star-warm) 10%, transparent) 0%,
-        transparent 55%);
+      radial-gradient(circle at 38% 42%, rgba(251, 146, 60, 0.55) 0%, rgba(251, 146, 60, 0) 38%),
+      radial-gradient(circle at 64% 58%, rgba(34, 211, 238, 0.42) 0%, rgba(34, 211, 238, 0) 42%),
+      radial-gradient(circle at 50% 50%, rgba(244, 229, 200, 0.18) 0%, rgba(244, 229, 200, 0) 55%);
     filter: blur(8px);
     z-index: 2;
     transition: filter 320ms ease;
@@ -393,11 +400,10 @@ const planets: Planet[] = [
     inset: -16%;
     border-radius: 50%;
     background: radial-gradient(circle at 50% 50%,
-      color-mix(in oklch, var(--color-accent-secondary) 9%, transparent),
-      transparent 55%);
+      rgba(34, 211, 238, 0.16), transparent 55%);
     filter: blur(20px);
     z-index: 1;
-    opacity: 0.7;
+    opacity: 0.85;
     transition: opacity 320ms ease, transform 320ms ease;
   }
   .xstar.treew .neb-ring {
@@ -405,28 +411,28 @@ const planets: Planet[] = [
     border-radius: 50%;
     border: 1px dashed;
     z-index: 4;
-    opacity: 0.32;
+    opacity: 0.42;
     transition: opacity 280ms ease;
   }
   .xstar.treew .neb-ring.r1 {
-    inset: -6%;
-    border-color: color-mix(in oklch, var(--color-star-amber) 70%, transparent);
+    inset: -4%;
+    border-color: var(--color-accent-primary);
     animation: spin-cw 60s linear infinite;
   }
   .xstar.treew .neb-ring.r2 {
-    inset: -16%;
-    border-color: color-mix(in oklch, var(--color-accent-secondary) 50%, transparent);
+    inset: -14%;
+    border-color: var(--color-accent-secondary);
     border-style: dotted;
-    opacity: 0.22;
+    opacity: 0.32;
     animation: spin-ccw 90s linear infinite;
   }
   .xstar.treew .neb-pip {
     position: absolute;
-    width: 3px;
-    height: 3px;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
     background: var(--color-star-warm);
-    box-shadow: 0 0 5px var(--color-star-warm);
+    box-shadow: 0 0 6px var(--color-star-warm);
     z-index: 5;
   }
   .xstar.treew .neb-pip.p1 { top: -2px; left: 50%; transform: translateX(-50%); }
@@ -435,9 +441,13 @@ const planets: Planet[] = [
     left: 50%;
     transform: translateX(-50%);
     background: var(--color-accent-secondary);
-    box-shadow: 0 0 5px var(--color-accent-secondary);
+    box-shadow: 0 0 6px var(--color-accent-secondary);
   }
 
+  .xstar.treew:hover .neb-core,
+  .xstar.treew:focus-within .neb-core {
+    filter: blur(1px) brightness(1.15);
+  }
   .xstar.treew:hover .neb-haze,
   .xstar.treew:focus-within .neb-haze {
     opacity: 1;
@@ -445,12 +455,13 @@ const planets: Planet[] = [
   }
   .xstar.treew:hover .neb-cloud,
   .xstar.treew:focus-within .neb-cloud {
-    filter: blur(6px) brightness(1.08);
+    filter: blur(6px) brightness(1.1);
   }
   .xstar.treew:hover .neb-ring,
-  .xstar.treew:focus-within .neb-ring { opacity: 0.55; }
+  .xstar.treew:focus-within .neb-ring { opacity: 0.75; }
 
-  /* ----------- GSI · ringed gas giant (muted, Saturn-style) ----------- */
+  /* ----------- GSI · ringed gas giant (Saturn-style) ----------- */
+  /* rgba literals match Claude Design source verbatim — preserves the exact perceptual mix that color-mix in oklch slightly differs from. */
   .xstar.gsi .giant-body {
     position: absolute;
     width: 96px;
@@ -460,19 +471,32 @@ const planets: Planet[] = [
     left: 50%;
     transform: translate(-50%, -50%);
     background:
+      /* terminator shading */
       radial-gradient(circle at 32% 32%,
-        color-mix(in oklch, var(--color-star-warm) 70%, transparent) 0%,
-        color-mix(in oklch, var(--color-star-amber) 55%, transparent) 18%,
-        transparent 42%),
-      linear-gradient(180deg,
-        color-mix(in oklch, var(--color-text-muted) 70%, var(--color-background)) 0%,
-        color-mix(in oklch, var(--color-star-amber) 35%, var(--color-background)) 40%,
-        color-mix(in oklch, var(--color-star-amber) 25%, var(--color-background)) 60%,
-        color-mix(in oklch, var(--color-text-muted) 60%, var(--color-background)) 100%);
+        rgba(244, 229, 200, 0.85) 0%,
+        rgba(232, 184, 132, 0.7) 18%,
+        rgba(232, 184, 132, 0.0) 42%),
+      /*
+       * Atmospheric bands — purple/magenta hex literals are inline on purpose:
+       * they are aesthetic primitives outside the design-system palette and an
+       * oklch mix between palette tokens produces a perceptually different shade.
+       * Keep the literals so this matches the Claude Design source exactly.
+       */
+      linear-gradient(
+        180deg,
+        #2a2030 0%,
+        #4a3848 18%,
+        #6a4a52 32%,
+        #8a5e58 44%,
+        #6e4a52 56%,
+        #4e3640 68%,
+        #382838 82%,
+        #1a1420 100%
+      );
     box-shadow:
-      inset -8px -10px 24px color-mix(in oklch, var(--color-background) 70%, transparent),
-      inset 4px 6px 12px color-mix(in oklch, var(--color-star-warm) 6%, transparent),
-      0 0 36px color-mix(in oklch, var(--color-star-amber) 8%, transparent);
+      inset -10px -14px 36px rgba(0,0,0,0.7),
+      inset 6px 8px 18px rgba(244, 229, 200, 0.08),
+      0 0 50px rgba(232, 184, 132, 0.12);
     z-index: 3;
     transition: box-shadow 320ms ease;
   }
@@ -485,9 +509,9 @@ const planets: Planet[] = [
     left: 50%;
     transform: translate(-50%, -50%);
     background: radial-gradient(circle at 50% 50%,
-      transparent 60%,
-      color-mix(in oklch, var(--color-star-amber) 12%, transparent) 70%,
-      transparent 78%);
+      rgba(232, 184, 132, 0) 60%,
+      rgba(232, 184, 132, 0.18) 70%,
+      rgba(232, 184, 132, 0) 78%);
     z-index: 2;
     transition: transform 320ms ease, opacity 320ms ease;
   }
@@ -507,44 +531,84 @@ const planets: Planet[] = [
     border-radius: 50%;
   }
   .xstar.gsi .giant-ring.outer {
-    border: 1px solid color-mix(in oklch, var(--color-text-muted) 60%, transparent);
+    border: 1px solid rgba(232, 184, 132, 0.35);
     background: radial-gradient(ellipse at center,
       transparent 60%,
-      color-mix(in oklch, var(--color-text-muted) 22%, transparent) 70%,
-      color-mix(in oklch, var(--color-text-muted) 30%, transparent) 80%,
+      rgba(232, 184, 132, 0.12) 70%,
+      rgba(232, 184, 132, 0.22) 80%,
       transparent 92%);
   }
   .xstar.gsi .giant-ring.mid {
     inset: 5px 12px;
-    border: 1px solid color-mix(in oklch, var(--color-border) 90%, transparent);
+    border: 1px solid rgba(244, 229, 200, 0.25);
     background: radial-gradient(ellipse at center,
       transparent 55%,
-      color-mix(in oklch, var(--color-text-muted) 14%, transparent) 75%,
+      rgba(244, 229, 200, 0.08) 75%,
       transparent 90%);
   }
   .xstar.gsi .giant-ring.inner {
     inset: 11px 24px;
-    border: 1px dashed color-mix(in oklch, var(--color-border) 80%, transparent);
+    border: 1px dashed rgba(34, 211, 238, 0.25);
   }
-  .xstar.gsi .giant-rings::after {
-    content: "";
+  /*
+   * Front-arc layer for the rings: same geometry, painted ABOVE the body,
+   * clipped to its bottom half so the ring appears to wrap around the
+   * planet (back arc behind, front arc in front). clip-path is applied
+   * before transform, so the bottom-half strip rotates with the ring.
+   *
+   * Claude Design's source had a `.giant-rings::after` rim highlight to
+   * suggest the front of the ring crossing the body; that pseudo was
+   * intentionally removed here because the .front layer above already
+   * provides that wrap-effect, and at the smaller portfolio scale the
+   * extremely flat 180x22 ellipse rendered the inset highlight as a
+   * stray straight-ish line drifting behind the planet body.
+   */
+  .xstar.gsi .giant-rings.front {
+    z-index: 4;
+    clip-path: inset(50% 0 0 0);
+  }
+
+  /*
+   * Orbiter — small bright pip travelling the elliptical ring path.
+   * One copy lives in each ring layer (back + front). Both follow the
+   * same offset-path and animation so they stay perfectly synced; at any
+   * frame the back-layer copy is occluded by the planet body where they
+   * overlap, and the front-layer copy is hidden by the layer's clip when
+   * it crosses the top half. The result is a single dot that visibly
+   * "wraps around" the planet as it orbits.
+   *
+   * Path is in .giant-rings local coordinates (180×46 box, ellipse
+   * center at 90,23, semi-axes 90 horizontal × 23 vertical), traced as
+   * two arcs that close back to the starting point.
+   */
+  .xstar.gsi .ring-orbiter {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 180px;
-    height: 22px;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 3px;
     border-radius: 50%;
-    box-shadow: inset 0 1px 0 color-mix(in oklch, var(--color-text-muted) 45%, transparent);
+    background: var(--color-star-warm);
+    box-shadow:
+      0 0 4px var(--color-star-warm),
+      0 0 9px rgba(244, 229, 200, 0.55);
     pointer-events: none;
+    offset-path: path('M 180 23 A 90 23 0 0 1 0 23 A 90 23 0 0 1 180 23');
+    offset-distance: 0%;
+    offset-rotate: 0deg;
+    animation: ring-orbit 14s linear infinite;
+    z-index: 6;
+  }
+  @keyframes ring-orbit {
+    to { offset-distance: 100%; }
   }
 
   .xstar.gsi:hover .giant-body,
   .xstar.gsi:focus-within .giant-body {
     box-shadow:
-      inset -8px -10px 24px color-mix(in oklch, var(--color-background) 70%, transparent),
-      inset 4px 6px 12px color-mix(in oklch, var(--color-star-warm) 9%, transparent),
-      0 0 60px color-mix(in oklch, var(--color-star-amber) 18%, transparent);
+      inset -10px -14px 36px rgba(0,0,0,0.7),
+      inset 6px 8px 18px rgba(244, 229, 200, 0.14),
+      0 0 80px rgba(232, 184, 132, 0.28);
   }
   .xstar.gsi:hover .giant-atm,
   .xstar.gsi:focus-within .giant-atm {
@@ -556,6 +620,7 @@ const planets: Planet[] = [
   }
 
   /* ----------- ATI · pulsar (vivid yellow-orange core, hover-activated rings) ----------- */
+  /* rgba literals match Claude Design source verbatim — preserves the exact perceptual mix that color-mix in oklch slightly differs from. */
   .xstar.ati .body {
     overflow: visible;
   }
@@ -582,11 +647,11 @@ const planets: Planet[] = [
         #8B3A0F 70%,
         #3D1A05 100%);
     box-shadow:
-      0 0 24px color-mix(in oklch, var(--color-star-amber) 70%, transparent),
-      0 0 48px color-mix(in oklch, var(--color-accent-primary) 45%, transparent),
-      0 0 96px color-mix(in oklch, var(--color-accent-primary) 18%, transparent),
-      inset -4px -4px 12px color-mix(in oklch, var(--color-background) 40%, transparent),
-      inset 3px 3px 8px color-mix(in oklch, var(--color-star-warm) 50%, transparent);
+      0 0 24px rgba(232, 184, 132, 0.7),
+      0 0 48px rgba(251, 146, 60, 0.45),
+      0 0 96px rgba(251, 146, 60, 0.18),
+      inset -4px -4px 12px rgba(0,0,0,0.4),
+      inset 3px 3px 8px rgba(244, 229, 200, 0.5);
     z-index: 5;
     transition: box-shadow 320ms ease, transform 320ms ease;
   }
@@ -599,8 +664,8 @@ const planets: Planet[] = [
     left: 50%;
     transform: translate(-50%, -50%);
     background: radial-gradient(circle at center,
-      color-mix(in oklch, var(--color-accent-primary) 22%, transparent) 0%,
-      color-mix(in oklch, var(--color-accent-primary) 10%, transparent) 25%,
+      rgba(251, 146, 60, 0.22) 0%,
+      rgba(251, 146, 60, 0.1) 25%,
       transparent 55%);
     filter: blur(6px);
     z-index: 1;
@@ -621,7 +686,7 @@ const planets: Planet[] = [
     width: 80px;
     height: 80px;
     transform: translate(-50%, -50%);
-    border-color: color-mix(in oklch, var(--color-accent-primary) 55%, transparent);
+    border-color: rgba(251, 146, 60, 0.55);
     animation: pulse-1 4.2s ease-out infinite;
     animation-play-state: running;
   }
@@ -629,7 +694,7 @@ const planets: Planet[] = [
     width: 90px;
     height: 90px;
     transform: translate(-50%, -50%);
-    border-color: color-mix(in oklch, var(--color-star-amber) 40%, transparent);
+    border-color: rgba(232, 184, 132, 0.4);
     border-style: dashed;
     animation: pulse-2 5.4s ease-out infinite;
     animation-play-state: running;
@@ -638,7 +703,7 @@ const planets: Planet[] = [
     width: 100px;
     height: 100px;
     transform: translate(-50%, -50%);
-    border-color: color-mix(in oklch, var(--color-accent-primary) 25%, transparent);
+    border-color: rgba(251, 146, 60, 0.25);
     animation: pulse-3 6.6s ease-out infinite;
     animation-play-state: running;
   }
@@ -651,9 +716,9 @@ const planets: Planet[] = [
     transform: translate(-50%, -50%);
     background: linear-gradient(90deg,
       transparent 0%,
-      color-mix(in oklch, var(--color-star-warm) 40%, transparent) 45%,
-      color-mix(in oklch, var(--color-star-warm) 70%, transparent) 50%,
-      color-mix(in oklch, var(--color-star-warm) 40%, transparent) 55%,
+      rgba(244, 229, 200, 0.4) 45%,
+      rgba(244, 229, 200, 0.7) 50%,
+      rgba(244, 229, 200, 0.4) 55%,
       transparent 100%);
     z-index: 4;
     opacity: 0;
@@ -672,11 +737,11 @@ const planets: Planet[] = [
   .xstar.ati.is-hover .pulsar-core {
     transform: translate(-50%, -50%) scale(1.08);
     box-shadow:
-      0 0 36px color-mix(in oklch, var(--color-star-amber) 85%, transparent),
-      0 0 80px color-mix(in oklch, var(--color-accent-primary) 60%, transparent),
-      0 0 140px color-mix(in oklch, var(--color-accent-primary) 30%, transparent),
-      inset -4px -4px 12px color-mix(in oklch, var(--color-background) 40%, transparent),
-      inset 3px 3px 8px color-mix(in oklch, var(--color-star-warm) 60%, transparent);
+      0 0 36px rgba(232, 184, 132, 0.85),
+      0 0 80px rgba(251, 146, 60, 0.6),
+      0 0 140px rgba(251, 146, 60, 0.3),
+      inset -4px -4px 12px rgba(0,0,0,0.4),
+      inset 3px 3px 8px rgba(244, 229, 200, 0.6);
   }
   .xstar.ati:hover .pulsar-haze,
   .xstar.ati:focus-within .pulsar-haze,
@@ -1315,7 +1380,7 @@ const planets: Planet[] = [
   @keyframes spin-ccw { to { transform: rotate(-360deg); } }
   @keyframes neb-pulse {
     0%, 100% { filter: blur(2px) brightness(1); }
-    50%      { filter: blur(2px) brightness(1.12); }
+    50%      { filter: blur(2px) brightness(1.15); }
   }
   @keyframes spin-beam {
     from { transform: translate(-50%, -50%) rotate(0deg); }
@@ -1364,7 +1429,6 @@ const planets: Planet[] = [
     .xstar { width: 110px; height: 110px; }
     .xstar.gsi .giant-body { width: 76px; height: 76px; }
     .xstar.gsi .giant-rings { width: 144px; height: 38px; }
-    .xstar.gsi .giant-rings::after { width: 144px; }
     .xstar.gsi .giant-atm { width: 88px; height: 88px; }
     .xstar.ati .pulsar-core { width: 50px; height: 50px; }
     .xstar.ati .pulsar-haze { width: 120px; height: 120px; }
@@ -1412,7 +1476,8 @@ const planets: Planet[] = [
     .xstar.treew .neb-ring.r1,
     .xstar.treew .neb-ring.r2,
     .xstar.ati .pulsar-ring,
-    .xstar.ati .pulsar-beam {
+    .xstar.ati .pulsar-beam,
+    .xstar.gsi .ring-orbiter {
       animation: none !important;
     }
     .star .glyph,
