@@ -1092,7 +1092,7 @@ const planets: Planet[] = [
   .hc-company-out {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 16px;
     letter-spacing: -0.01em;
     color: var(--color-text-primary);
     line-height: 1.2;
@@ -1102,7 +1102,7 @@ const planets: Planet[] = [
   }
   .hc-date-out {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--color-text-muted);
@@ -1131,7 +1131,7 @@ const planets: Planet[] = [
   }
   .hc-role-out {
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--color-text-primary);
     margin: 0 0 4px;
@@ -1142,7 +1142,7 @@ const planets: Planet[] = [
   }
   .hc-desc-out {
     font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: 13px;
     line-height: 1.5;
     color: var(--color-text-muted);
     margin: 0;
@@ -1517,6 +1517,95 @@ const planets: Planet[] = [
     .xstar:hover .hc-leader-stroke,
     .xstar:focus-within .hc-leader-stroke {
       stroke-dashoffset: 0;
+    }
+
+    /* Focus-blur: drop the visual deemphasis under reduced-motion. */
+    .work-stage:has(.xstar:hover) .constellation,
+    .work-stage:has(.xstar:focus-within) .constellation,
+    .work-stage:has(.xstar:hover) .planet-slot:not(:has(.xstar:hover)),
+    .work-stage:has(.xstar:focus-within) .planet-slot:not(:has(.xstar:focus-within)) {
+      filter: none;
+      opacity: 1;
+    }
+  }
+
+  /* ============================================================
+     FOCUS-BLUR (in-section) — when one of the experience-planets
+     is hovered, blur and dim everything else inside the work-stage
+     so the eye stays on the selected planet and its readout.
+     The .chart-frame (observatory chrome: corners, ticks, RA/Dec
+     labels, chart label, chart meta) is intentionally NOT blurred —
+     it lives in the foreground plane along with the site header.
+     The page-level chrome (starfield, other sections) is handled
+     by the <style is:global> block further below.
+     ============================================================ */
+  .constellation,
+  .planet-slot {
+    transition: filter 360ms ease, opacity 360ms ease;
+  }
+  .work-stage:has(.xstar:hover) .constellation,
+  .work-stage:has(.xstar:focus-within) .constellation,
+  .work-stage:has(.xstar:hover) .planet-slot:not(:has(.xstar:hover)),
+  .work-stage:has(.xstar:focus-within) .planet-slot:not(:has(.xstar:focus-within)) {
+    filter: blur(5px);
+    opacity: 0.4;
+  }
+</style>
+
+<style is:global>
+  /*
+   * Focus-blur (page-wide): when any experience-planet inside the work
+   * section is hovered, dim and blur the BACKGROUND plane of the page.
+   *
+   * Plane model:
+   *   - Foreground (always sharp): the site header (.site-header) and
+   *     every chart-frame across all sections (corner brackets, ticks,
+   *     RA/Dec labels, section title, chart-meta footer) — these are
+   *     the "telescope chrome" the user is looking THROUGH.
+   *   - Mid (planets and HUD): handled by Work's scoped rules.
+   *   - Background (gets blurred): the starfield (.sky + .stars) and
+   *     every stage's non-chart-frame children (constellation in each
+   *     section, hero text, projects cards, contact platforms, etc.).
+   *
+   * The Work section's own internal blur (constellation + non-hovered
+   * planet slots) is handled by the scoped block above — that's why
+   * .work-stage isn't included in the page-level rules below.
+   */
+  .sky,
+  .stars,
+  .hero-stage > *:not(.chart-frame),
+  .projects-stage > *:not(.chart-frame),
+  .contact-stage > *:not(.chart-frame) {
+    transition: filter 360ms ease, opacity 360ms ease;
+  }
+
+  body:has(.work-stage .xstar:hover) > .sky,
+  body:has(.work-stage .xstar:hover) > .stars,
+  body:has(.work-stage .xstar:focus-within) > .sky,
+  body:has(.work-stage .xstar:focus-within) > .stars,
+  body:has(.work-stage .xstar:hover) .hero-stage > *:not(.chart-frame),
+  body:has(.work-stage .xstar:hover) .projects-stage > *:not(.chart-frame),
+  body:has(.work-stage .xstar:hover) .contact-stage > *:not(.chart-frame),
+  body:has(.work-stage .xstar:focus-within) .hero-stage > *:not(.chart-frame),
+  body:has(.work-stage .xstar:focus-within) .projects-stage > *:not(.chart-frame),
+  body:has(.work-stage .xstar:focus-within) .contact-stage > *:not(.chart-frame) {
+    filter: blur(5px);
+    opacity: 0.4;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body:has(.work-stage .xstar:hover) > .sky,
+    body:has(.work-stage .xstar:hover) > .stars,
+    body:has(.work-stage .xstar:focus-within) > .sky,
+    body:has(.work-stage .xstar:focus-within) > .stars,
+    body:has(.work-stage .xstar:hover) .hero-stage > *:not(.chart-frame),
+    body:has(.work-stage .xstar:hover) .projects-stage > *:not(.chart-frame),
+    body:has(.work-stage .xstar:hover) .contact-stage > *:not(.chart-frame),
+    body:has(.work-stage .xstar:focus-within) .hero-stage > *:not(.chart-frame),
+    body:has(.work-stage .xstar:focus-within) .projects-stage > *:not(.chart-frame),
+    body:has(.work-stage .xstar:focus-within) .contact-stage > *:not(.chart-frame) {
+      filter: none;
+      opacity: 1;
     }
   }
 </style>
