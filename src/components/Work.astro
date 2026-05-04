@@ -3,15 +3,49 @@ import ChartFrame from "./ChartFrame.astro";
 
 type PlanetKind = "treew" | "gsi" | "ati";
 
+// ============================================================
+// SHARED CLUSTERS — used by BOTH planets and skill stars.
+// Every renderable element in the work-stage that participates in a
+// cluster carries a matching `cluster` id. The final position of any
+// such element is `base + clusterOffsets[cluster]`. Bumping a single
+// offset moves the whole group (planet + its skills) in lockstep.
+// ============================================================
+
+type Cluster =
+  | "ati"
+  | "bridge-ag"
+  | "bridge-3"
+  | "gsi"
+  | "bridge-gt"
+  | "treew"
+  | "loose-low"
+  | "loose-iso";
+
+const clusterOffsets: Record<Cluster, { dx: number; dy: number }> = {
+  "ati":       { dx: 0, dy: 0 },
+  "bridge-ag": { dx: 4, dy: 3 },
+  "bridge-3":  { dx: 5, dy: 5 },
+  "gsi":       { dx: 10, dy: 6 },
+  "bridge-gt": { dx: 0, dy: 0 },
+  "treew":     { dx: 0, dy: 0 },
+  "loose-low": { dx: 5, dy: -8 },
+  "loose-iso": { dx: 0, dy: 0 },
+};
+
+// ============================================================
+// EXPERIENCE PLANETS
+// ============================================================
+
 type Planet = {
   kind: PlanetKind;
+  cluster: Cluster;
   company: string;
   role: string;
   dateStart: string;
   dateEnd: string;
   description: string;
-  top: string;
-  left: string;
+  top: number;
+  left: number;
   // `side` controls where the default HUD sits relative to the planet.
   // `hoverSide` controls which way the callout (revealed on hover) extends.
   // They are intentionally decoupled so the default and hover layouts can
@@ -26,43 +60,111 @@ type Planet = {
 const planets: Planet[] = [
   {
     kind: "ati",
+    cluster: "ati",
     company: "ATI",
     role: "Automation Specialist",
     dateStart: "Oct 2019",
     dateEnd: "May 2023",
     description:
       "Configured and deployed PCVue-Seefox SCADA across 72 substations of the National Dispatch. Integrated K-Power Ship floating power plants into the national energy system. Modbus and IEC 60870-5 over the wire.",
-    top: "78%",
-    left: "30%",
+    top: 78,
+    left: 30,
     side: "left",
     hoverSide: "right",
   },
   {
     kind: "gsi",
+    cluster: "gsi",
     company: "GSI",
     role: "Computer Science Specialist",
     dateStart: "May 2023",
     dateEnd: "Mar 2026",
     description:
       "Backend and full-stack across e-commerce, fintech, and healthcare insurance: .NET microservices, AWS Lambda, React/TS, Flutter mobile. Built an industrial SCADA system in WPF/.NET with PLC and RFID traceability.",
-    top: "48%",
-    left: "60%",
+    top: 48,
+    left: 60,
     side: "right",
     hoverSide: "left",
   },
   {
     kind: "treew",
+    cluster: "treew",
     company: "Treew",
     role: "Senior Software Engineer",
     dateStart: "Sept 2024",
     dateEnd: "Present",
     description:
       "Built 25+ backend microservices for e-commerce. Designed an AI Product Validator running 13 OpenAI agents in parallel with vector stores. Built a bulk SMS platform on Postgres LISTEN/NOTIFY with worker pools and SSE.",
-    top: "18%",
-    left: "38%",
+    top: 18,
+    left: 38,
     side: "right",
     hoverSide: "right",
   },
+];
+
+// ============================================================
+// SKILL CONSTELLATION — data-driven layout
+// ============================================================
+// Each star carries its base (top, left) plus a `cluster` tag. The final
+// rendered position is `base + clusterOffsets[cluster]`. That gives two
+// orthogonal moves:
+//   - Move a single star within its cluster: edit its top/left below.
+//   - Move the whole cluster in lockstep: bump dx/dy in clusterOffsets.
+// ============================================================
+
+type SkillStar = {
+  cluster: Cluster;
+  glyph: string;
+  name: string;
+  cat: string;
+  coord: string;
+  magNum: string;
+  top: number;
+  left: number;
+  mag: 1 | 2 | 3 | 4;
+  size: "xs" | "sm" | "md" | "lg" | "xl";
+  tribe: "hw" | "sw";
+};
+
+const skillStars: SkillStar[] = [
+  // ATI cluster — industrial protocols + .NET desktop + SCADA platform.
+  { cluster: "ati", glyph: "Mb",  name: "Modbus",       cat: "protocol",       coord: "17h 12m · +38°", magNum: "m 1.9", top: 88, left: 42, mag: 2, size: "md", tribe: "hw" },
+  { cluster: "ati", glyph: "IEC", name: "IEC 60870-5",  cat: "protocol",       coord: "15h 02m · −22°", magNum: "m 4.1", top: 90, left: 10, mag: 4, size: "xs", tribe: "hw" },
+  { cluster: "ati", glyph: "Bz",  name: "Blazor",       cat: "web-ui",         coord: "15h 47m · +08°", magNum: "m 4.0", top: 75, left: 14, mag: 4, size: "xs", tribe: "sw" },
+  { cluster: "ati", glyph: "PCv", name: "PCVue",        cat: "scada-platform", coord: "16h 14m · −08°", magNum: "m 2.3", top: 64, left: 21, mag: 3, size: "sm", tribe: "hw" },
+
+  // Bridge ATI ↔ GSI — PLC at substations and bottling SCADA.
+  { cluster: "bridge-ag", glyph: "PLC", name: "Programmable Logic Controller", cat: "hardware", coord: "17h 38m · −26°", magNum: "m 2.5", top: 62, left: 45, mag: 3, size: "sm", tribe: "hw" },
+
+  // Bridge of 3 — closer to GSI/Treew than ATI.
+  { cluster: "bridge-3", glyph: "C#", name: "C#",         cat: "language", coord: "14h 22m · +57°", magNum: "m 0.6", top: 45, left: 44, mag: 1, size: "xl", tribe: "sw" },
+  { cluster: "bridge-3", glyph: "Ss", name: "SQL Server", cat: "database", coord: "17h 25m · +12°", magNum: "m 2.6", top: 40, left: 40, mag: 3, size: "sm", tribe: "sw" },
+
+  // GSI cluster — desktop SCADA + cloud.
+  { cluster: "gsi", glyph: "Wpf", name: "Windows Presentation Foundation", cat: "desktop-ui", coord: "14h 58m · +44°", magNum: "m 4.0", top: 63, left: 58, mag: 4, size: "xs", tribe: "sw" },
+  { cluster: "gsi", glyph: "Aws", name: "Amazon Web Services",             cat: "cloud",      coord: "15h 24m · −12°", magNum: "m 2.7", top: 55, left: 78, mag: 3, size: "sm", tribe: "sw" },
+
+  // Bridge GSI ↔ Treew — modern stack used at both.
+  { cluster: "bridge-gt", glyph: "Ts", name: "TypeScript", cat: "language",   coord: "15h 11m · +33°", magNum: "m 1.8", top: 22, left: 50, mag: 2, size: "md", tribe: "sw" },
+  { cluster: "bridge-gt", glyph: "Pg", name: "PostgreSQL", cat: "database",   coord: "17h 58m · +03°", magNum: "m 1.6", top: 29, left: 60, mag: 2, size: "md", tribe: "sw" },
+  { cluster: "bridge-gt", glyph: "Dk", name: "Docker",     cat: "containers", coord: "18h 31m · −16°", magNum: "m 2.8", top: 38, left: 70, mag: 3, size: "sm", tribe: "sw" },
+  { cluster: "bridge-gt", glyph: "Js", name: "JavaScript", cat: "language",   coord: "18h 04m · +49°", magNum: "m 2.5", top: 10, left: 52, mag: 3, size: "sm", tribe: "sw" },
+  { cluster: "bridge-gt", glyph: "Ht", name: "HTML",       cat: "web-markup", coord: "15h 12m · +18°", magNum: "m 4.2", top: 27, left: 47, mag: 4, size: "xs", tribe: "sw" },
+  { cluster: "bridge-gt", glyph: "Cs", name: "CSS",        cat: "web-style",  coord: "17h 48m · −04°", magNum: "m 4.3", top: 28, left: 50, mag: 4, size: "xs", tribe: "sw" },
+
+  // Treew cluster — Python (FastAPI) + MongoDB.
+  { cluster: "treew", glyph: "Py", name: "Python",  cat: "language", coord: "17h 41m · +28°", magNum: "m 2.6", top: 8,  left: 23, mag: 3, size: "sm", tribe: "sw" },
+  { cluster: "treew", glyph: "Mg", name: "MongoDB", cat: "database", coord: "18h 22m · +07°", magNum: "m 2.7", top: 18, left: 78, mag: 3, size: "sm", tribe: "sw" },
+
+  // Loose low-level — left-edge cluster, hardware/low-level skills.
+  { cluster: "loose-low", glyph: "μC",  name: "Microcontroller", cat: "hardware", coord: "15h 28m · +03°", magNum: "m 4.0", top: 62, left: 4,  mag: 4, size: "xs", tribe: "hw" },
+  { cluster: "loose-low", glyph: "Asm", name: "Assembler",       cat: "language", coord: "14h 06m · +24°", magNum: "m 4.4", top: 45, left: 4,  mag: 4, size: "xs", tribe: "sw" },
+  { cluster: "loose-low", glyph: "PCB", name: "PCB Design",      cat: "hardware", coord: "15h 51m · −34°", magNum: "m 2.4", top: 38, left: 10, mag: 3, size: "sm", tribe: "hw" },
+
+  // Loose isolated — scattered, no shared planet.
+  { cluster: "loose-iso", glyph: "Lx",  name: "Linux", cat: "os",            coord: "14h 48m · +18°", magNum: "m 4.2", top: 90, left: 80, mag: 4, size: "xs", tribe: "sw" },
+  { cluster: "loose-iso", glyph: "Re",  name: "React", cat: "web-framework", coord: "17h 14m · −18°", magNum: "m 4.0", top: 38, left: 90, mag: 4, size: "xs", tribe: "sw" },
+  { cluster: "loose-iso", glyph: "C++", name: "C++",   cat: "language",      coord: "14h 42m · −38°", magNum: "m 4.1", top: 88, left: 62, mag: 4, size: "xs", tribe: "sw" },
 ];
 ---
 
@@ -71,237 +173,47 @@ const planets: Planet[] = [
     <ChartFrame label="WORK · HARDWARE × SOFTWARE" />
 
     <div class="constellation">
-      {/* ATI cluster — industrial protocols + PCVue + Blazor desktop. */}
-      <a class="star tribe-hw mag-2 sz-md" style="top: 88%; left: 42%;" href="#" aria-label="Modbus">
-        <span class="glyph">Mb<span class="twinkle"></span></span>
-        <span class="catalog">
-          <span class="row1"><span class="name">Modbus</span><span class="mag">m 1.9</span></span>
-          <span class="cat-coord">17h 12m · +38°</span>
-          <span class="cat">protocol</span>
-        </span>
-      </a>
-
-      <a class="star tribe-hw mag-4 sz-xs hide-sm" style="top: 90%; left: 10%;" href="#" aria-label="IEC 60870-5">
-        <span class="glyph">IEC</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">IEC 60870-5</span><span class="mag">m 4.1</span></span>
-          <span class="cat-coord">15h 02m · −22°</span>
-          <span class="cat">protocol</span>
-        </span>
-      </a>
-
-      <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 75%; left: 14%;" href="#" aria-label="Blazor">
-        <span class="glyph">Bz</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">Blazor</span><span class="mag">m 4.0</span></span>
-          <span class="cat-coord">15h 47m · +08°</span>
-          <span class="cat">web-ui</span>
-        </span>
-      </a>
-
-      <a class="star tribe-hw mag-3 sz-sm" style="top: 64%; left: 21%;" href="#" aria-label="PCVue">
-        <span class="glyph">PCv</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">PCVue</span><span class="mag">m 2.3</span></span>
-          <span class="cat-coord">16h 14m · −08°</span>
-          <span class="cat">scada-platform</span>
-        </span>
-      </a>
-
-      {/* Bridge ATI ↔ GSI — PLC used at substations (ATI) and bottling SCADA (GSI). */}
-      <a class="star tribe-hw mag-3 sz-sm" style="top: 62%; left: 45%;" href="#" aria-label="PLC">
-        <span class="glyph">PLC</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">Programmable Logic Controller</span><span class="mag">m 2.5</span></span>
-          <span class="cat-coord">17h 38m · −26°</span>
-          <span class="cat">hardware</span>
-        </span>
-      </a>
-
-      {/* GSI cluster — desktop SCADA + cloud. */}
-      <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 63%; left: 58%;" href="#" aria-label="WPF">
-        <span class="glyph">Wpf</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">Windows Presentation Foundation</span><span class="mag">m 4.0</span></span>
-          <span class="cat-coord">14h 58m · +44°</span>
-          <span class="cat">desktop-ui</span>
-        </span>
-      </a>
-
-      <a class="star tribe-sw mag-3 sz-sm" style="top: 55%; left: 78%;" href="#" aria-label="AWS">
-        <span class="glyph">Aws</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">Amazon Web Services</span><span class="mag">m 2.7</span></span>
-          <span class="cat-coord">15h 24m · −12°</span>
-          <span class="cat">cloud</span>
-        </span>
-      </a>
-
-      {/* Bridge GSI ↔ Treew — modern stack shared across both with various leans. */}
-      <a class="star tribe-sw mag-1 sz-xl" style="top: 45%; left: 44%;" href="#" aria-label="C#">
-        <span class="glyph">C#<span class="twinkle"></span></span>
-        <span class="catalog">
-          <span class="row1"><span class="name">C#</span><span class="mag">m 0.6</span></span>
-          <span class="cat-coord">14h 22m · +57°</span>
-          <span class="cat">language</span>
-        </span>
-      </a>
-
-      <a class="star tribe-sw mag-2 sz-md" style="top: 22%; left: 50%;" href="#" aria-label="TypeScript">
-        <span class="glyph">Ts<span class="twinkle"></span></span>
-        <span class="catalog">
-          <span class="row1"><span class="name">TypeScript</span><span class="mag">m 1.8</span></span>
-          <span class="cat-coord">15h 11m · +33°</span>
-          <span class="cat">language</span>
-        </span>
-      </a>
-
-      <a class="star tribe-sw mag-2 sz-md" style="top: 29%; left: 60%;" href="#" aria-label="PostgreSQL">
-        <span class="glyph">Pg<span class="twinkle"></span></span>
-        <span class="catalog">
-          <span class="row1"><span class="name">PostgreSQL</span><span class="mag">m 1.6</span></span>
-          <span class="cat-coord">17h 58m · +03°</span>
-          <span class="cat">database</span>
-        </span>
-      </a>
-
-      <a class="star tribe-sw mag-3 sz-sm" style="top: 38%; left: 70%;" href="#" aria-label="Docker">
-        <span class="glyph">Dk</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">Docker</span><span class="mag">m 2.8</span></span>
-          <span class="cat-coord">18h 31m · −16°</span>
-          <span class="cat">containers</span>
-        </span>
-      </a>
-
-      <a class="star tribe-sw mag-3 sz-sm" style="top: 10%; left: 52%;" href="#" aria-label="JavaScript">
-        <span class="glyph">Js</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">JavaScript</span><span class="mag">m 2.5</span></span>
-          <span class="cat-coord">18h 04m · +49°</span>
-          <span class="cat">language</span>
-        </span>
-      </a>
-
-      <a class="star tribe-sw mag-3 sz-sm" style="top: 40%; left: 40%;" href="#" aria-label="SQL Server">
-        <span class="glyph">Ss</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">SQL Server</span><span class="mag">m 2.6</span></span>
-          <span class="cat-coord">17h 25m · +12°</span>
-          <span class="cat">database</span>
-        </span>
-      </a>
-
-      <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 27%; left: 47%;" href="#" aria-label="HTML">
-        <span class="glyph">Ht</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">HTML</span><span class="mag">m 4.2</span></span>
-          <span class="cat-coord">15h 12m · +18°</span>
-          <span class="cat">web-markup</span>
-        </span>
-      </a>
-
-      <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 28%; left: 50%;" href="#" aria-label="CSS">
-        <span class="glyph">Cs</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">CSS</span><span class="mag">m 4.3</span></span>
-          <span class="cat-coord">17h 48m · −04°</span>
-          <span class="cat">web-style</span>
-        </span>
-      </a>
-
-      {/* Treew cluster — Python = FastAPI, exclusive to Treew. */}
-      <a class="star tribe-sw mag-3 sz-sm" style="top: 8%; left: 23%;" href="#" aria-label="Python">
-        <span class="glyph">Py</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">Python</span><span class="mag">m 2.6</span></span>
-          <span class="cat-coord">17h 41m · +28°</span>
-          <span class="cat">language</span>
-        </span>
-      </a>
-
-      {/* ATI cluster extension — low-level languages and PCB design. */}
-      <a class="star tribe-hw mag-3 sz-sm" style="top: 38%; left: 10%;" href="#" aria-label="PCB Design">
-        <span class="glyph">PCB</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">PCB Design</span><span class="mag">m 2.4</span></span>
-          <span class="cat-coord">15h 51m · −34°</span>
-          <span class="cat">hardware</span>
-        </span>
-      </a>
-
-      <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 88%; left: 62%;" href="#" aria-label="C++">
-        <span class="glyph">C++</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">C++</span><span class="mag">m 4.1</span></span>
-          <span class="cat-coord">14h 42m · −38°</span>
-          <span class="cat">language</span>
-        </span>
-      </a>
-
-      <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 95%; left: 18%;" href="#" aria-label="MatLab">
-        <span class="glyph">Ml</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">MatLab</span><span class="mag">m 4.3</span></span>
-          <span class="cat-coord">14h 18m · −42°</span>
-          <span class="cat">language</span>
-        </span>
-      </a>
-
-      {/* GSI extension — React used in TS/MUI frontends. */}
-      <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 38%; left: 90%;" href="#" aria-label="React">
-        <span class="glyph">Re</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">React</span><span class="mag">m 4.0</span></span>
-          <span class="cat-coord">17h 14m · −18°</span>
-          <span class="cat">web-framework</span>
-        </span>
-      </a>
-
-      {/* Bridge GSI ↔ Treew extension — MongoDB (NoSQL). */}
-      <a class="star tribe-sw mag-3 sz-sm" style="top: 18%; left: 78%;" href="#" aria-label="MongoDB">
-        <span class="glyph">Mg</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">MongoDB</span><span class="mag">m 2.7</span></span>
-          <span class="cat-coord">18h 22m · +07°</span>
-          <span class="cat">database</span>
-        </span>
-      </a>
-
-      {/* Loose / unaffiliated — these don't belong to any single planet. */}
-      <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 90%; left: 80%;" href="#" aria-label="Linux">
-        <span class="glyph">Lx</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">Linux</span><span class="mag">m 4.2</span></span>
-          <span class="cat-coord">14h 48m · +18°</span>
-          <span class="cat">os</span>
-        </span>
-      </a>
-
-      <a class="star tribe-hw mag-4 sz-xs hide-sm" style="top: 62%; left: 4%;" href="#" aria-label="Microcontroller">
-        <span class="glyph">μC</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">Microcontroller</span><span class="mag">m 4.0</span></span>
-          <span class="cat-coord">15h 28m · +03°</span>
-          <span class="cat">hardware</span>
-        </span>
-      </a>
-
-      <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 45%; left: 4%;" href="#" aria-label="Assembler">
-        <span class="glyph">Asm</span>
-        <span class="catalog">
-          <span class="row1"><span class="name">Assembler</span><span class="mag">m 4.4</span></span>
-          <span class="cat-coord">14h 06m · +24°</span>
-          <span class="cat">language</span>
-        </span>
-      </a>
+      {skillStars.map((s) => {
+        const offset = clusterOffsets[s.cluster];
+        const top = s.top + offset.dy;
+        const left = s.left + offset.dx;
+        const showTwinkle = s.mag === 1 || s.mag === 2;
+        return (
+          <a
+            class:list={[
+              "star",
+              `tribe-${s.tribe}`,
+              `mag-${s.mag}`,
+              `sz-${s.size}`,
+              s.mag === 4 && "hide-sm",
+            ]}
+            style={`top: ${top}%; left: ${left}%;`}
+            href="#"
+            aria-label={s.name}
+          >
+            <span class="glyph">
+              {s.glyph}
+              {showTwinkle && <span class="twinkle"></span>}
+            </span>
+            <span class="catalog">
+              <span class="row1"><span class="name">{s.name}</span><span class="mag">{s.magNum}</span></span>
+              <span class="cat-coord">{s.coord}</span>
+              <span class="cat">{s.cat}</span>
+            </span>
+          </a>
+        );
+      })}
     </div>
 
     <div class="planets">
-      {planets.map((p) => (
+      {planets.map((p) => {
+        const offset = clusterOffsets[p.cluster];
+        const top = p.top + offset.dy;
+        const left = p.left + offset.dx;
+        return (
         <article
           class:list={["planet-slot", `slot-${p.kind}`, `side-${p.side}`]}
-          style={`top: ${p.top}; left: ${p.left};`}
+          style={`top: ${top}%; left: ${left}%;`}
         >
           <div class={`xstar ${p.kind}`}>
             <div class="body">
@@ -400,7 +312,8 @@ const planets: Planet[] = [
             </div>
           </div>
         </article>
-      ))}
+        );
+      })}
     </div>
   </div>
 </section>
