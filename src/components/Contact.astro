@@ -1,0 +1,352 @@
+---
+import ChartFrame from "./ChartFrame.astro";
+
+const platforms = [
+  {
+    mark: "Gh",
+    name: "GitHub",
+    handle: "carlosjortiz",
+    href: "https://github.com/carlosjortiz",
+    coord: "14h 36m · +52°",
+  },
+  {
+    mark: "@",
+    name: "Email",
+    handle: "ortizdcj@gmail.com",
+    href: "mailto:ortizdcj@gmail.com",
+    coord: "15h 18m · +21°",
+  },
+  {
+    mark: "Li",
+    name: "LinkedIn",
+    handle: "carlosj-ortiz",
+    href: "https://www.linkedin.com/in/carlosj-ortiz/",
+    coord: "16h 42m · −04°",
+  },
+  {
+    mark: "Tg",
+    name: "Telegram",
+    handle: "@krlosjortiz",
+    href: "https://t.me/krlosjortiz",
+    coord: "17h 55m · −22°",
+  },
+];
+---
+
+<section id="contact" class="contact">
+  <div class="contact-stage">
+    <ChartFrame label="CONTACT · OPEN TO INTERESTING CONVERSATIONS" />
+
+    <div class="constellation">
+      <a class="star tribe-sw mag-3 sz-xs" style="top: 10%; left: 8%;" href="#" aria-label="Field star">
+        <span class="glyph">·</span>
+        <span class="catalog">
+          <span class="row1"><span class="name">Field star</span><span class="mag">m 3.4</span></span>
+          <span class="cat-coord">14h 02m · +56°</span>
+          <span class="cat">decorative</span>
+        </span>
+      </a>
+      <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 14%; left: 92%;" href="#" aria-label="Field star">
+        <span class="glyph">·</span>
+        <span class="catalog">
+          <span class="row1"><span class="name">Field star</span><span class="mag">m 4.0</span></span>
+          <span class="cat-coord">18h 11m · +48°</span>
+          <span class="cat">decorative</span>
+        </span>
+      </a>
+      <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 86%; left: 9%;" href="#" aria-label="Field star">
+        <span class="glyph">·</span>
+        <span class="catalog">
+          <span class="row1"><span class="name">Field star</span><span class="mag">m 4.1</span></span>
+          <span class="cat-coord">15h 08m · −24°</span>
+          <span class="cat">decorative</span>
+        </span>
+      </a>
+      <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 88%; left: 91%;" href="#" aria-label="Field star">
+        <span class="glyph">·</span>
+        <span class="catalog">
+          <span class="row1"><span class="name">Field star</span><span class="mag">m 4.2</span></span>
+          <span class="cat-coord">17h 47m · −28°</span>
+          <span class="cat">decorative</span>
+        </span>
+      </a>
+    </div>
+
+    <div class="contact-text">
+      <p class="message">
+        Reach out &mdash; open to conversations about automation, backends, and anything at the seam between hardware and software.
+      </p>
+
+      <div class="platforms">
+        {platforms.map((p, i) => (
+          <a
+            class={`star tribe-sw mag-${i % 2 === 0 ? '1' : '2'} sz-${i % 2 === 0 ? 'xl' : 'lg'} platform`}
+            href={p.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={p.name}
+          >
+            <span class="glyph">{p.mark}<span class="twinkle"></span></span>
+            <span class="catalog">
+              <span class="row1"><span class="name">{p.name}</span><span class="mag">m {i % 2 === 0 ? '0' : '1'}.{i + 4}</span></span>
+              <span class="cat-coord">{p.coord}</span>
+              <span class="cat">{p.handle}</span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    position: relative;
+    z-index: 2;
+    min-height: calc(100vh - 76px);
+    display: grid;
+    place-items: center;
+    padding: 80px 24px 100px;
+  }
+  .contact-stage {
+    position: relative;
+    width: 100%;
+    max-width: 1240px;
+    aspect-ratio: 16 / 10;
+    max-height: 78vh;
+  }
+
+  .constellation {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .constellation > * { pointer-events: auto; }
+
+  .contact-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    width: min(640px, 80%);
+    text-align: center;
+  }
+
+  .message {
+    font-size: clamp(15px, 1.4vw, 18px);
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    max-width: 540px;
+    margin: 0 auto 56px;
+    text-wrap: pretty;
+  }
+
+  .platforms {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 56px;
+    margin: 0 auto;
+    height: 80px;
+  }
+
+  .platforms .star {
+    position: relative;
+    transform: none;
+    animation: none;
+  }
+  .platforms .star.mag-1 .glyph,
+  .platforms .star.mag-2 .glyph { opacity: 1; }
+
+  .star {
+    cursor: pointer;
+    --halo: color-mix(in oklch, var(--color-accent-secondary) 50%, transparent);
+    text-decoration: none;
+  }
+
+  .constellation .star {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  .constellation .star.mag-3 { animation: drift3 9s  ease-in-out infinite; }
+  .constellation .star.mag-4 { animation: drift4 14s ease-in-out infinite; }
+
+  @keyframes drift3 {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50%      { transform: translate(-50%, -50%) translateY(-4px); }
+  }
+  @keyframes drift4 {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50%      { transform: translate(-50%, -50%) translateY(3px); }
+  }
+
+  .platforms .star:hover .glyph,
+  .platforms .star:focus-visible .glyph {
+    transform: scale(1.1) translateY(-2px);
+  }
+
+  .star .glyph {
+    position: relative;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-accent-secondary);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    transition:
+      transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      border-color 0.3s,
+      box-shadow 0.4s,
+      background 0.3s;
+  }
+
+  .star.sz-xl .glyph { width: 56px; height: 56px; font-size: 16px; border-radius: 12px; }
+  .star.sz-lg .glyph { width: 48px; height: 48px; font-size: 14px; border-radius: 10px; }
+  .star.sz-md .glyph { width: 40px; height: 40px; font-size: 12px; }
+  .star.sz-sm .glyph { width: 32px; height: 32px; font-size: 11px; border-radius: 6px; }
+  .star.sz-xs .glyph { width: 26px; height: 26px; font-size: 10px; border-radius: 5px; }
+
+  .star.mag-3 .glyph { opacity: 0.78; }
+  .star.mag-4 .glyph { opacity: 0.55; }
+
+  .star .glyph::before {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: inherit;
+    background: radial-gradient(circle at center, var(--halo), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    z-index: -1;
+    filter: blur(6px);
+  }
+
+  .star:hover .glyph,
+  .star:focus-visible .glyph {
+    border-color: currentColor;
+    background: var(--color-surface-2);
+    opacity: 1;
+  }
+  .star:hover .glyph::before,
+  .star:focus-visible .glyph::before {
+    opacity: 1;
+  }
+
+  .catalog {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    min-width: 200px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 28px -8px color-mix(in oklch, var(--color-background) 70%, transparent);
+    text-align: left;
+  }
+  .catalog::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    background: var(--color-surface);
+    border-left: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border);
+  }
+  .star:hover .catalog,
+  .star:focus-visible .catalog {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+  .catalog .row1 {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .catalog .name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+  }
+  .catalog .mag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--color-text-muted);
+    letter-spacing: 0.1em;
+  }
+  .catalog .cat-coord {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+  .catalog .cat {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid;
+    color: var(--color-accent-secondary);
+    border-color: color-mix(in oklch, var(--color-accent-secondary) 30%, transparent);
+  }
+
+  .star .twinkle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: var(--color-star-cool);
+    top: 4px;
+    right: 4px;
+    box-shadow: 0 0 4px var(--color-star-cool);
+    opacity: 0.6;
+    animation: twinkle 4s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.25; transform: scale(0.85); }
+    50%      { opacity: 0.85; transform: scale(1.1); }
+  }
+  .star.mag-3 .twinkle, .star.mag-4 .twinkle { display: none; }
+
+  @media (max-width: 760px) {
+    .contact-stage {
+      aspect-ratio: 4 / 5;
+      max-height: none;
+    }
+    .star.hide-sm { display: none; }
+    .platforms { gap: 28px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .star,
+    .star .twinkle {
+      animation: none;
+    }
+    .star .glyph {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,460 @@
+---
+import ChartFrame from "./ChartFrame.astro";
+
+const showProjects = !import.meta.env.PROD;
+
+const projects = [
+  {
+    name: "Navis",
+    tagline:
+      "File-first API client. Like Postman or Insomnia, but works directly with .http files — no DB, no cloud.",
+    stack: ["Rust", "Tauri 2", "React", "TypeScript", "Vite", "Tailwind", "tree-sitter"],
+    status: "Pre-MVP — first public release v0.1.0",
+    // Placeholder href until Carlos shares the public repo URL.
+    href: "#",
+  },
+  {
+    name: "Marauder's Notes",
+    tagline:
+      "Cross-platform whiteboard note-taking app. Each note is a free-form board where you write, draw, paste, and embed anything.",
+    stack: ["React", "Tauri", "Rust"],
+    status: "In development",
+    // Placeholder href until Carlos shares the public repo URL.
+    href: "#",
+  },
+];
+---
+
+{showProjects && (
+  <section id="projects" class="projects">
+    <div class="projects-stage">
+      <ChartFrame label="PROJECTS · WORK IN PROGRESS" />
+
+      <div class="constellation">
+        <a class="star tribe-sw mag-1 sz-xl" style="top: 8%; left: 6%;" href="#" aria-label="Rust">
+          <span class="glyph">Rs<span class="twinkle"></span></span>
+          <span class="catalog">
+            <span class="row1"><span class="name">Rust</span><span class="mag">m 0.5</span></span>
+            <span class="cat-coord">14h 12m · +59°</span>
+            <span class="cat">language</span>
+          </span>
+        </a>
+
+        <a class="star tribe-sw mag-2 sz-md" style="top: 6%; left: 94%;" href="#" aria-label="Tauri">
+          <span class="glyph">Tr<span class="twinkle"></span></span>
+          <span class="catalog">
+            <span class="row1"><span class="name">Tauri</span><span class="mag">m 1.7</span></span>
+            <span class="cat-coord">17h 56m · +51°</span>
+            <span class="cat">desktop-shell</span>
+          </span>
+        </a>
+
+        <a class="star tribe-sw mag-2 sz-md" style="top: 28%; left: 4%;" href="#" aria-label="TypeScript">
+          <span class="glyph">Ts<span class="twinkle"></span></span>
+          <span class="catalog">
+            <span class="row1"><span class="name">TypeScript</span><span class="mag">m 1.9</span></span>
+            <span class="cat-coord">15h 02m · +34°</span>
+            <span class="cat">language</span>
+          </span>
+        </a>
+
+        <a class="star tribe-sw mag-3 sz-sm" style="top: 26%; left: 96%;" href="#" aria-label="React">
+          <span class="glyph">Re</span>
+          <span class="catalog">
+            <span class="row1"><span class="name">React</span><span class="mag">m 2.7</span></span>
+            <span class="cat-coord">17h 38m · +29°</span>
+            <span class="cat">framework</span>
+          </span>
+        </a>
+
+        <a class="star tribe-sw mag-3 sz-sm" style="top: 76%; left: 5%;" href="#" aria-label="Vite">
+          <span class="glyph">Vt</span>
+          <span class="catalog">
+            <span class="row1"><span class="name">Vite</span><span class="mag">m 2.9</span></span>
+            <span class="cat-coord">15h 31m · −10°</span>
+            <span class="cat">build-tool</span>
+          </span>
+        </a>
+
+        <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 80%; left: 95%;" href="#" aria-label="Tailwind">
+          <span class="glyph">Tw</span>
+          <span class="catalog">
+            <span class="row1"><span class="name">Tailwind CSS</span><span class="mag">m 3.9</span></span>
+            <span class="cat-coord">18h 14m · −18°</span>
+            <span class="cat">styling</span>
+          </span>
+        </a>
+
+        <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 90%; left: 38%;" href="#" aria-label="tree-sitter">
+          <span class="glyph">Tx</span>
+          <span class="catalog">
+            <span class="row1"><span class="name">tree-sitter</span><span class="mag">m 4.0</span></span>
+            <span class="cat-coord">15h 49m · −24°</span>
+            <span class="cat">parser</span>
+          </span>
+        </a>
+
+        <a class="star tribe-sw mag-4 sz-xs hide-sm" style="top: 92%; left: 64%;" href="#" aria-label="CodeMirror">
+          <span class="glyph">Cm</span>
+          <span class="catalog">
+            <span class="row1"><span class="name">CodeMirror</span><span class="mag">m 4.2</span></span>
+            <span class="cat-coord">17h 21m · −27°</span>
+            <span class="cat">editor</span>
+          </span>
+        </a>
+      </div>
+
+      <div class="projects-text">
+        <ol class="cards">
+          {projects.map((p) => (
+            <li class="card">
+              <div class="card-head">
+                <h2 class="name">{p.name}</h2>
+                <span class="status">{p.status}</span>
+              </div>
+              <p class="tagline">{p.tagline}</p>
+              <ul class="chips">
+                {p.stack.map((s) => (<li class="chip">{s}</li>))}
+              </ul>
+              <a class="repo" href={p.href}>repo <span class="arrow">&rarr;</span></a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .projects {
+    position: relative;
+    z-index: 2;
+    min-height: calc(100vh - 76px);
+    display: grid;
+    place-items: center;
+    padding: 80px 24px 80px;
+  }
+  .projects-stage {
+    position: relative;
+    width: 100%;
+    max-width: 1240px;
+    aspect-ratio: 16 / 10;
+    max-height: 88vh;
+  }
+
+  .constellation {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .constellation > * { pointer-events: auto; }
+
+  .projects-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    width: min(720px, 80%);
+    pointer-events: none;
+  }
+  .projects-text > * { pointer-events: auto; }
+
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .card {
+    padding: 18px 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: color-mix(in oklch, var(--color-surface) 60%, transparent);
+    backdrop-filter: blur(4px);
+  }
+
+  .card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 8px;
+  }
+
+  .name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: clamp(18px, 2.0vw, 22px);
+    letter-spacing: -0.015em;
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent-secondary);
+    white-space: nowrap;
+  }
+
+  .tagline {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--color-text-secondary);
+    margin: 0 0 12px;
+    text-wrap: pretty;
+  }
+
+  .chips {
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--color-text-secondary);
+    padding: 3px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: color-mix(in oklch, var(--color-surface-2) 50%, transparent);
+  }
+
+  .repo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.25s;
+  }
+  .repo:hover { color: var(--color-accent-primary); }
+  .repo .arrow { font-size: 10px; transition: transform 0.25s; }
+  .repo:hover .arrow { transform: translateX(2px); }
+
+  .star {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    --halo: color-mix(in oklch, var(--color-star-warm) 50%, transparent);
+    --tone: var(--color-star-warm);
+    text-decoration: none;
+  }
+
+  .star.mag-1 { animation: drift1 11s ease-in-out infinite; }
+  .star.mag-2 { animation: drift2 13s ease-in-out infinite; }
+  .star.mag-3 { animation: drift3 9s  ease-in-out infinite; }
+  .star.mag-4 { animation: drift4 14s ease-in-out infinite; }
+
+  @keyframes drift1 {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50%      { transform: translate(-50%, -50%) translateY(-6px); }
+  }
+  @keyframes drift2 {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50%      { transform: translate(-50%, -50%) translateY(5px); }
+  }
+  @keyframes drift3 {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50%      { transform: translate(-50%, -50%) translateY(-4px); }
+  }
+  @keyframes drift4 {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50%      { transform: translate(-50%, -50%) translateY(3px); }
+  }
+
+  .star .glyph {
+    position: relative;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    transition:
+      transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      border-color 0.3s,
+      box-shadow 0.4s,
+      background 0.3s;
+  }
+
+  .star.sz-xl .glyph { width: 56px; height: 56px; font-size: 16px; border-radius: 12px; }
+  .star.sz-lg .glyph { width: 48px; height: 48px; font-size: 14px; border-radius: 10px; }
+  .star.sz-md .glyph { width: 40px; height: 40px; font-size: 12px; }
+  .star.sz-sm .glyph { width: 32px; height: 32px; font-size: 11px; border-radius: 6px; }
+  .star.sz-xs .glyph { width: 26px; height: 26px; font-size: 10px; border-radius: 5px; }
+
+  .star.mag-1 .glyph {
+    opacity: 1.0;
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--color-text-primary) 2%, transparent),
+      0 4px 24px -8px color-mix(in oklch, var(--color-background) 60%, transparent);
+  }
+  .star.mag-2 .glyph { opacity: 0.92; }
+  .star.mag-3 .glyph { opacity: 0.78; }
+  .star.mag-4 .glyph { opacity: 0.55; }
+
+  .star.tribe-sw .glyph {
+    color: var(--color-accent-secondary);
+    --halo: color-mix(in oklch, var(--color-accent-secondary) 50%, transparent);
+  }
+
+  .star .glyph::before {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: inherit;
+    background: radial-gradient(circle at center, var(--halo), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    z-index: -1;
+    filter: blur(6px);
+  }
+
+  .star:hover .glyph,
+  .star:focus-visible .glyph {
+    transform: scale(1.08);
+    border-color: currentColor;
+    background: var(--color-surface-2);
+    opacity: 1;
+  }
+  .star:hover .glyph::before,
+  .star:focus-visible .glyph::before {
+    opacity: 1;
+  }
+
+  .catalog {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    min-width: 168px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 28px -8px color-mix(in oklch, var(--color-background) 70%, transparent);
+    display: block;
+  }
+  .catalog::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    background: var(--color-surface);
+    border-left: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border);
+  }
+  .star:hover .catalog,
+  .star:focus-visible .catalog {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+  .catalog .row1 {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .catalog .name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+  }
+  .catalog .mag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--color-text-muted);
+    letter-spacing: 0.1em;
+  }
+  .catalog .cat-coord {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+  .catalog .cat {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid;
+    color: var(--color-accent-secondary);
+    border-color: color-mix(in oklch, var(--color-accent-secondary) 30%, transparent);
+  }
+
+  .star .twinkle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: var(--color-star-cool);
+    top: 4px;
+    right: 4px;
+    box-shadow: 0 0 4px var(--color-star-cool);
+    opacity: 0.6;
+    animation: twinkle 4s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.25; transform: scale(0.85); }
+    50%      { opacity: 0.85; transform: scale(1.1); }
+  }
+  .star.mag-3 .twinkle, .star.mag-4 .twinkle { display: none; }
+
+  @media (max-width: 760px) {
+    .projects-stage {
+      aspect-ratio: 4 / 5;
+      max-height: none;
+    }
+    .star.hide-sm { display: none; }
+    .card-head {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .star,
+    .star .twinkle {
+      animation: none;
+    }
+    .star .glyph {
+      transition: none;
+    }
+  }
+</style>

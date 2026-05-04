@@ -5,11 +5,10 @@ import Constellation from "./Constellation.astro";
 
 <section class="hero">
   <div class="hero-stage">
-    <ChartFrame />
+    <ChartFrame label="PERSONAL PORTFOLIO · CARLOS J. ORTIZ" />
     <Constellation />
 
     <div class="hero-text">
-      <div class="eyebrow">PERSONAL PORTFOLIO · CARLOS J. ORTIZ</div>
       <h1>
         Where <span class="accent">Modbus</span> meets <span class="accent">GraphQL</span> &mdash; and microcontrollers talk to microservices.
       </h1>
@@ -52,23 +51,6 @@ import Constellation from "./Constellation.astro";
     pointer-events: none;
   }
   .hero-text > * { pointer-events: auto; }
-
-  .eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    color: var(--color-text-muted);
-    margin-bottom: 22px;
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .eyebrow::before, .eyebrow::after {
-    content: "";
-    width: 24px;
-    height: 1px;
-    background: var(--color-border);
-  }
 
   h1 {
     font-family: 'Inter', sans-serif;

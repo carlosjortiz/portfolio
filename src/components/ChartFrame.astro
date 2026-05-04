@@ -1,5 +1,12 @@
+---
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
 <div class="chart-frame" aria-hidden="true">
-  <span class="chart-label">Chart 01 · Stack Catalog · 14h 27m</span>
+  <span class="chart-label">{label}</span>
   <span class="corner tl"></span>
   <span class="corner tr"></span>
   <span class="corner bl"></span>
