@@ -1,206 +1,239 @@
 ---
-// Constellation of stack icons: hardware tribe (left, copper), software tribe
-// (right, cyan), and two apex anchors (.Nt at top, Ax at bottom). Letter-marks
-// only — no real logos — keeping the catalog feel of an astronomical chart.
+// Hero constellation — 16 skills Carlos actually has, not tools he happens to use.
 //
-// The bridge polyline crosses three points: industrial protocols (left) ->
-// .NET (apex) -> JetBrains (right), tracing the actual arc of Carlos's
-// career rather than a literal tagline reference.
+// Hardware/automation tribe (orange) — left zone:  SCADA, PLC, PCB, Microcontroller, Assembler
+// Software tribe (cyan) — top + right zone:  .NET, C#, TypeScript, JavaScript, Python, FastAPI, REST API, GraphQL, PostgreSQL, SQL Server
+// Neutral — bottom-center:  Linux
+//
+// Skills that travel together as concepts (Python+FastAPI, TS+JS, REST+GraphQL,
+// Postgres+SQL Server, Microcontroller+Assembler, .NET+C#) are grouped inside
+// a `.mini-cluster` wrapper. Move the wrapper's top/left and the whole pair
+// shifts together while keeping its internal arrangement intact.
 ---
 
-<svg class="lines" viewBox="0 0 1000 625" preserveAspectRatio="none" aria-hidden="true">
-  <polyline class="ln-hardware" points="190,125 220,325 90,387 40,200 190,125" />
-  <line class="ln-hardware" x1="60" y1="506" x2="90" y2="387" />
-  <line class="ln-hardware" x1="60" y1="506" x2="150" y2="556" />
-
-  <polyline class="ln-software" points="880,200 960,312 880,500 780,400 880,200" />
-  <line class="ln-software" x1="880" y1="200" x2="740" y2="112" />
-  <line class="ln-bridge" x1="740" y1="112" x2="500" y2="75" />
-
-  <line class="ln-bridge" x1="190" y1="125" x2="500" y2="75" />
-</svg>
-
 <div class="constellation">
-  <a class="star tribe-neu mag-1 sz-xl" style="top: 12%; left: 50%;" href="#" aria-label=".NET">
-    <span class="glyph">.Nt<span class="twinkle"></span></span>
+  {/* ============== LOOSE — hardware/automation anchor ============== */}
+  <a class="star tribe-hw mag-3 sz-md" style="top: 42%; left: 14%;" href="#" aria-label="PCB Design">
+    <span class="glyph">PCB</span>
     <span class="catalog">
-      <span class="row1"><span class="name">.NET</span><span class="mag">m 0.3</span></span>
-      <span class="cat-coord">16h 00m · +58°</span>
-      <span class="cat">bridge-tech</span>
-    </span>
-  </a>
-
-  <a class="star tribe-hw mag-3 sz-sm" style="top: 71%; left: 22%;" href="#" aria-label="IoT">
-    <span class="glyph">IoT</span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Internet of Things</span><span class="mag">m 2.7</span></span>
-      <span class="cat-coord">14h 11m · +52°</span>
-      <span class="cat">domain</span>
-    </span>
-  </a>
-
-  <a class="star tribe-hw mag-2 sz-md" style="top: 32%; left: 4%;" href="#" aria-label="PLC">
-    <span class="glyph">PLC<span class="twinkle"></span></span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Programmable Logic Controller</span><span class="mag">m 1.9</span></span>
-      <span class="cat-coord">13h 47m · +41°</span>
+      <span class="row1"><span class="name">PCB Design</span><span class="mag">m 2.4</span></span>
+      <span class="cat-coord">14h 12m · +24°</span>
       <span class="cat">hardware</span>
     </span>
   </a>
 
-  <a class="star tribe-hw mag-3 sz-sm" style="top: 81%; left: 6%;" href="#" aria-label="Microcontroller">
-    <span class="glyph">μC</span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Microcontroller</span><span class="mag">m 3.0</span></span>
-      <span class="cat-coord">14h 34m · +28°</span>
-      <span class="cat">hardware</span>
-    </span>
-  </a>
+  {/* ============== MINI-CLUSTER — SCADA + PLC (above PCB) ============== */}
+  <div class="mini-cluster" style="top: 28%; left: 22%;">
+    <a class="star tribe-hw mag-1 sz-xl" href="#" aria-label="SCADA">
+      <span class="glyph">SCADA<span class="twinkle"></span></span>
+      <span class="catalog">
+        <span class="row1"><span class="name">Supervisory Control and Data Acquisition</span><span class="mag">m 0.9</span></span>
+        <span class="cat-coord">15h 36m · −09°</span>
+        <span class="cat">systems</span>
+      </span>
+    </a>
+    <a class="star tribe-hw mag-2 sz-lg" style="top: -47px; left: -68px;" href="#" aria-label="PLC">
+      <span class="glyph">PLC<span class="twinkle"></span></span>
+      <span class="catalog">
+        <span class="row1"><span class="name">Programmable Logic Controller</span><span class="mag">m 1.9</span></span>
+        <span class="cat-coord">13h 47m · +41°</span>
+        <span class="cat">hardware</span>
+      </span>
+    </a>
+    <a class="star tribe-hw mag-3 sz-sm" style="top: 20px; left: -50px;" href="#" aria-label="Industrial protocols">
+      <span class="glyph">⇄</span>
+      <span class="catalog">
+        <span class="row1"><span class="name">Industrial protocols</span><span class="mag">m 0.7</span></span>
+        <span class="cat-coord">14h 58m · +14°</span>
+        <span class="cat">Modbus · IEC 60870 · OPC UA · Profibus</span>
+      </span>
+    </a>
+  </div>
 
-  <a class="star tribe-hw mag-1 sz-xl" style="top: 20%; left: 19%;" href="#" aria-label="Industrial protocols">
-    <span class="glyph">⇄<span class="twinkle"></span></span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Industrial protocols</span><span class="mag">m 0.7</span></span>
-      <span class="cat-coord">14h 58m · +14°</span>
-      <span class="cat">Modbus · IEC 60870 · OPC UA · Profibus</span>
-    </span>
-  </a>
+  {/* ============== MINI-CLUSTER — Linux + Windows + Arch (OS family) ============== */}
+  <div class="mini-cluster" style="top: 92%; left: 50%;">
+    <a class="star tribe-neu mag-2 sz-xl" href="#" aria-label="Linux">
+      <span class="glyph">Lx<span class="twinkle"></span></span>
+      <span class="catalog">
+        <span class="row1"><span class="name">Linux</span><span class="mag">m 1.6</span></span>
+        <span class="cat-coord">16h 00m · −28°</span>
+        <span class="cat">operating-system</span>
+      </span>
+    </a>
+    <a class="star tribe-neu mag-3 sz-md" style="top: -37px; left: 55px;" href="#" aria-label="Windows">
+      <span class="glyph">Wn</span>
+      <span class="catalog">
+        <span class="row1"><span class="name">Windows</span><span class="mag">m 2.5</span></span>
+        <span class="cat-coord">16h 22m · −18°</span>
+        <span class="cat">operating-system</span>
+      </span>
+    </a>
+    <a class="star tribe-neu mag-3 sz-sm" style="top: -20px; left: -50px;" href="#" aria-label="Arch Linux">
+      <span class="glyph">Ax</span>
+      <span class="catalog">
+        <span class="row1"><span class="name">Arch Linux</span><span class="mag">m 2.7</span></span>
+        <span class="cat-coord">15h 38m · −34°</span>
+        <span class="cat">operating-system</span>
+      </span>
+    </a>
+  </div>
 
-  <a class="star tribe-hw mag-4 sz-xs hide-sm" style="top: 89%; left: 15%;" href="#" aria-label="Home automation">
-    <span class="glyph">Home</span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Home automation</span><span class="mag">m 4.1</span></span>
-      <span class="cat-coord">15h 19m · +02°</span>
-      <span class="cat">domain</span>
-    </span>
-  </a>
+  {/* ============== MINI-CLUSTER — .NET + C# ============== */}
+  <div class="mini-cluster" style="top: 14%; left: 52%;">
+    <a class="star tribe-sw mag-1 sz-xl" href="#" aria-label=".NET">
+      <span class="glyph">.Nt<span class="twinkle"></span></span>
+      <span class="catalog">
+        <span class="row1"><span class="name">.NET</span><span class="mag">m 0.3</span></span>
+        <span class="cat-coord">16h 00m · +58°</span>
+        <span class="cat">framework</span>
+      </span>
+    </a>
+    <a class="star tribe-sw mag-2 sz-md" style="top: 31px; left: 50px;" href="#" aria-label="C#">
+      <span class="glyph">C#<span class="twinkle"></span></span>
+      <span class="catalog">
+        <span class="row1"><span class="name">C#</span><span class="mag">m 0.6</span></span>
+        <span class="cat-coord">14h 22m · +57°</span>
+        <span class="cat">language</span>
+      </span>
+    </a>
+  </div>
 
-  <a class="star tribe-hw mag-1 sz-xl" style="top: 52%; left: 22%;" href="#" aria-label="SCADA">
-    <span class="glyph">SCADA<span class="twinkle"></span></span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Supervisory Control and Data Acquisition</span><span class="mag">m 0.9</span></span>
-      <span class="cat-coord">15h 36m · −09°</span>
-      <span class="cat">systems</span>
-    </span>
-  </a>
+  {/* ============== MINI-CLUSTER — TypeScript + JavaScript ============== */}
+  <div class="mini-cluster" style="top: 22%; left: 84%;">
+    <a class="star tribe-sw mag-2 sz-md" href="#" aria-label="TypeScript">
+      <span class="glyph">Ts<span class="twinkle"></span></span>
+      <span class="catalog">
+        <span class="row1"><span class="name">TypeScript</span><span class="mag">m 1.8</span></span>
+        <span class="cat-coord">15h 11m · +33°</span>
+        <span class="cat">language</span>
+      </span>
+    </a>
+    <a class="star tribe-sw mag-3 sz-sm" style="top: -20px; left: -42px;" href="#" aria-label="JavaScript">
+      <span class="glyph">Js</span>
+      <span class="catalog">
+        <span class="row1"><span class="name">JavaScript</span><span class="mag">m 2.5</span></span>
+        <span class="cat-coord">18h 04m · +49°</span>
+        <span class="cat">language</span>
+      </span>
+    </a>
+  </div>
 
-  <a class="star tribe-hw mag-4 sz-xs hide-sm" style="top: 62%; left: 9%;" href="#" aria-label="Sensors">
-    <span class="glyph">∿</span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Sensor</span><span class="mag">m 4.2</span></span>
-      <span class="cat-coord">15h 48m · −18°</span>
-      <span class="cat">analog-i/o</span>
-    </span>
-  </a>
+  {/* ============== MINI-CLUSTER — Python + FastAPI ============== */}
+  <div class="mini-cluster" style="top: 52%; left: 94%;">
+    <a class="star tribe-sw mag-3 sz-sm" href="#" aria-label="Python">
+      <span class="glyph">Py</span>
+      <span class="catalog">
+        <span class="row1"><span class="name">Python</span><span class="mag">m 2.6</span></span>
+        <span class="cat-coord">17h 41m · +28°</span>
+        <span class="cat">language</span>
+      </span>
+    </a>
+    <a class="star tribe-sw mag-4 sz-xs" style="top: 17px; left: -35px;" href="#" aria-label="FastAPI">
+      <span class="glyph">Fp</span>
+      <span class="catalog">
+        <span class="row1"><span class="name">FastAPI</span><span class="mag">m 4.0</span></span>
+        <span class="cat-coord">17h 50m · +12°</span>
+        <span class="cat">framework</span>
+      </span>
+    </a>
+  </div>
 
-  <a class="star tribe-sw mag-3 sz-sm" style="top: 32%; left: 88%;" href="#" aria-label="Zed">
-    <span class="glyph">Zd</span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Zed</span><span class="mag">m 2.8</span></span>
-      <span class="cat-coord">17h 04m · +47°</span>
-      <span class="cat">editor</span>
-    </span>
-  </a>
+  {/* ============== MINI-CLUSTER — REST API + GraphQL ============== */}
+  <div class="mini-cluster" style="top: 70%; left: 92%;">
+    <a class="star tribe-sw mag-2 sz-lg" href="#" aria-label="REST API">
+      <span class="glyph">Rs</span>
+      <span class="catalog">
+        <span class="row1"><span class="name">REST API</span><span class="mag">m 2.5</span></span>
+        <span class="cat-coord">18h 06m · −04°</span>
+        <span class="cat">api-style</span>
+      </span>
+    </a>
+    <a class="star tribe-sw mag-3 sz-sm" style="top: 23px; left: -50px;" href="#" aria-label="GraphQL">
+      <span class="glyph">Gq</span>
+      <span class="catalog">
+        <span class="row1"><span class="name">GraphQL</span><span class="mag">m 2.7</span></span>
+        <span class="cat-coord">18h 22m · −12°</span>
+        <span class="cat">api-style</span>
+      </span>
+    </a>
+  </div>
 
-  <a class="star tribe-sw mag-2 sz-md" style="top: 50%; left: 96%;" href="#" aria-label="GitHub">
-    <span class="glyph">Gh<span class="twinkle"></span></span>
-    <span class="catalog">
-      <span class="row1"><span class="name">GitHub</span><span class="mag">m 1.6</span></span>
-      <span class="cat-coord">17h 29m · +33°</span>
-      <span class="cat">platform</span>
-    </span>
-  </a>
+  {/* ============== MINI-CLUSTER — PostgreSQL + SQL Server ============== */}
+  <div class="mini-cluster" style="top: 88%; left: 76%;">
+    <a class="star tribe-sw mag-2 sz-md" href="#" aria-label="PostgreSQL">
+      <span class="glyph">Pg<span class="twinkle"></span></span>
+      <span class="catalog">
+        <span class="row1"><span class="name">PostgreSQL</span><span class="mag">m 1.6</span></span>
+        <span class="cat-coord">17h 58m · +03°</span>
+        <span class="cat">database</span>
+      </span>
+    </a>
+    <a class="star tribe-sw mag-3 sz-md" style="top: 23px; left: 50px;" href="#" aria-label="SQL Server">
+      <span class="glyph">Ss</span>
+      <span class="catalog">
+        <span class="row1"><span class="name">SQL Server</span><span class="mag">m 2.6</span></span>
+        <span class="cat-coord">17h 25m · +12°</span>
+        <span class="cat">database</span>
+      </span>
+    </a>
+  </div>
 
-  <a class="star tribe-sw mag-3 sz-sm" style="top: 8%; left: 88%;" href="#" aria-label="Insomnia">
-    <span class="glyph">Is</span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Insomnia</span><span class="mag">m 2.9</span></span>
-      <span class="cat-coord">17h 51m · +21°</span>
-      <span class="cat">api-client</span>
-    </span>
-  </a>
-
-  <a class="star tribe-sw mag-1 sz-xl" style="top: 18%; left: 74%;" href="#" aria-label="JetBrains">
-    <span class="glyph">JB<span class="twinkle"></span></span>
-    <span class="catalog">
-      <span class="row1"><span class="name">JetBrains Suite</span><span class="mag">m 0.5</span></span>
-      <span class="cat-coord">18h 12m · +12°</span>
-      <span class="cat">Rider · IntelliJ · WebStorm</span>
-    </span>
-  </a>
-
-  <a class="star tribe-sw mag-2 sz-md" style="top: 64%; left: 78%;" href="#" aria-label="Git">
-    <span class="glyph">Gt<span class="twinkle"></span></span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Git</span><span class="mag">m 1.8</span></span>
-      <span class="cat-coord">18h 36m · −03°</span>
-      <span class="cat">vcs</span>
-    </span>
-  </a>
-
-  <a class="star tribe-sw mag-2 sz-md hide-sm" style="top: 80%; left: 88%;" href="#" aria-label="Docker">
-    <span class="glyph">Dk<span class="twinkle"></span></span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Docker</span><span class="mag">m 2.0</span></span>
-      <span class="cat-coord">19h 02m · −16°</span>
-      <span class="cat">containers</span>
-    </span>
-  </a>
-
-  <a class="star tribe-neu mag-3 sz-sm" style="top: 92%; left: 50%;" href="#" aria-label="Arch Linux">
-    <span class="glyph">Ax</span>
-    <span class="catalog">
-      <span class="row1"><span class="name">Arch Linux</span><span class="mag">m 2.5</span></span>
-      <span class="cat-coord">16h 00m · −28°</span>
-      <span class="cat">operating-system</span>
-    </span>
-  </a>
+  {/* ============== MINI-CLUSTER — Microcontroller + Assembler + C ============== */}
+  <div class="mini-cluster" style="top: 78%; left: 10%;">
+    <a class="star tribe-hw mag-2 sz-lg" href="#" aria-label="Microcontroller">
+      <span class="glyph">μC<span class="twinkle"></span></span>
+      <span class="catalog">
+        <span class="row1"><span class="name">Microcontroller</span><span class="mag">m 1.9</span></span>
+        <span class="cat-coord">14h 34m · +28°</span>
+        <span class="cat">hardware</span>
+      </span>
+    </a>
+    <a class="star tribe-sw mag-3 sz-sm" style="top: -23px; left: 50px;" href="#" aria-label="Assembler">
+      <span class="glyph">Asm</span>
+      <span class="catalog">
+        <span class="row1"><span class="name">Assembler</span><span class="mag">m 2.8</span></span>
+        <span class="cat-coord">14h 06m · +24°</span>
+        <span class="cat">language</span>
+      </span>
+    </a>
+    <a class="star tribe-sw mag-2 sz-md" style="top: 24px; left: 50px;" href="#" aria-label="C">
+      <span class="glyph">C</span>
+      <span class="catalog">
+        <span class="row1"><span class="name">C</span><span class="mag">m 1.7</span></span>
+        <span class="cat-coord">14h 28m · +18°</span>
+        <span class="cat">language</span>
+      </span>
+    </a>
+    <a class="star tribe-hw mag-4 sz-xs" style="top: -30px; left: -38px;" href="#" aria-label="Sensors">
+      <span class="glyph">∿</span>
+      <span class="catalog">
+        <span class="row1"><span class="name">Sensor</span><span class="mag">m 4.2</span></span>
+        <span class="cat-coord">15h 48m · −18°</span>
+        <span class="cat">analog-i/o</span>
+      </span>
+    </a>
+  </div>
 </div>
 
 <style>
-  .lines {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 2;
-  }
-  .lines line, .lines polyline {
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  /*
-   * Tribe lines stay near-invisible — they hint at relationships, never
-   * compete with marks or headline. The bridge is slightly more visible
-   * because it carries the narrative arc: industrial protocols -> .NET
-   * -> JetBrains, the actual through-line of Carlos's career.
-   */
-  .lines .ln-hardware {
-    stroke: var(--color-accent-primary);
-    opacity: 0.08;
-    stroke-width: 1;
-    stroke-dasharray: 2 4;
-  }
-  .lines .ln-software {
-    stroke: var(--color-accent-secondary);
-    opacity: 0.08;
-    stroke-width: 1;
-    stroke-dasharray: 2 4;
-  }
-  .lines .ln-bridge {
-    stroke: var(--color-text-secondary);
-    opacity: 0.14;
-    stroke-width: 1;
-    stroke-dasharray: 1 6;
-  }
-
   .constellation {
     position: absolute;
     inset: 0;
     z-index: 3;
+  }
+
+  /*
+   * Mini-cluster wrapper carries the GROUP'S position. Width/height: 0 so it
+   * doesn't affect layout — purely a positioning anchor. The first star
+   * inside (with no inline style) is centered at the wrapper's anchor via
+   * its own translate(-50%, -50%). Satellite stars override top/left with
+   * pixel offsets so the cluster stays visually tight at any viewport size,
+   * while moving the wrapper relocates the whole group.
+   */
+  .mini-cluster {
+    position: absolute;
+    width: 0;
+    height: 0;
   }
 
   .star {
@@ -210,6 +243,14 @@
     --halo: color-mix(in oklch, var(--color-star-warm) 50%, transparent);
     --tone: var(--color-star-warm);
     text-decoration: none;
+  }
+
+  /* Stars inside a mini-cluster default to (0,0); their own
+     translate(-50%, -50%) centers them on the wrapper's anchor point.
+     Satellites override top/left via inline style with px offsets. */
+  .mini-cluster > .star {
+    top: 0;
+    left: 0;
   }
 
   .star.mag-1 { animation: drift1 11s ease-in-out infinite; }
