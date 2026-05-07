@@ -192,7 +192,7 @@ const platforms = [
     position: relative;
     display: grid;
     place-items: center;
-    border-radius: 8px;
+    border-radius: 50%;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     color: var(--color-accent-secondary);
@@ -205,11 +205,13 @@ const platforms = [
       background 0.3s;
   }
 
-  .star.sz-xl .glyph { width: 56px; height: 56px; font-size: 16px; border-radius: 12px; }
-  .star.sz-lg .glyph { width: 48px; height: 48px; font-size: 14px; border-radius: 10px; }
+  /* Sizes inherit border-radius: 50% from the base rule above so every
+     glyph is circular regardless of dimensions. */
+  .star.sz-xl .glyph { width: 56px; height: 56px; font-size: 16px; }
+  .star.sz-lg .glyph { width: 48px; height: 48px; font-size: 14px; }
   .star.sz-md .glyph { width: 40px; height: 40px; font-size: 12px; }
-  .star.sz-sm .glyph { width: 32px; height: 32px; font-size: 11px; border-radius: 6px; }
-  .star.sz-xs .glyph { width: 26px; height: 26px; font-size: 10px; border-radius: 5px; }
+  .star.sz-sm .glyph { width: 32px; height: 32px; font-size: 11px; }
+  .star.sz-xs .glyph { width: 26px; height: 26px; font-size: 10px; }
 
   .star.mag-3 .glyph { opacity: 0.78; }
   .star.mag-4 .glyph { opacity: 0.55; }
@@ -319,8 +321,11 @@ const platforms = [
     height: 2px;
     border-radius: 50%;
     background: var(--color-star-cool);
-    top: 4px;
-    right: 4px;
+    /* Percentage-based offsets so the dot lands ON the curved edge of
+       the circular glyph at any size. The previous `4px` corner offset
+       worked for rounded squares but fell outside the circle's curve. */
+    top: 18%;
+    right: 18%;
     box-shadow: 0 0 4px var(--color-star-cool);
     opacity: 0.6;
     animation: twinkle 4s ease-in-out infinite;
