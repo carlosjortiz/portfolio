@@ -1,317 +1,146 @@
 ---
 import ChartFrame from "./ChartFrame.astro";
 
-type PlanetKind = "treew" | "gsi" | "ati";
-
-// ============================================================
-// SHARED CLUSTERS — used by BOTH planets and skill stars.
-// Every renderable element in the work-stage that participates in a
-// cluster carries a matching `cluster` id. The final position of any
-// such element is `base + clusterOffsets[cluster]`. Bumping a single
-// offset moves the whole group (planet + its skills) in lockstep.
-// ============================================================
-
-type Cluster =
-  | "ati"
-  | "bridge-ag"
-  | "bridge-3"
-  | "gsi"
-  | "bridge-gt"
-  | "treew"
-  | "loose-low"
-  | "loose-iso";
-
-const clusterOffsets: Record<Cluster, { dx: number; dy: number }> = {
-  "ati":       { dx: 0, dy: 0 },
-  "bridge-ag": { dx: 4, dy: 3 },
-  "bridge-3":  { dx: 5, dy: 5 },
-  "gsi":       { dx: 10, dy: 6 },
-  "bridge-gt": { dx: 0, dy: 0 },
-  "treew":     { dx: 0, dy: 0 },
-  "loose-low": { dx: 5, dy: -8 },
-  "loose-iso": { dx: 0, dy: 0 },
-};
-
-// ============================================================
-// EXPERIENCE PLANETS
-// ============================================================
-
-type Planet = {
-  kind: PlanetKind;
-  cluster: Cluster;
-  company: string;
+type Experience = {
   role: string;
+  company: string;
   dateStart: string;
   dateEnd: string;
   description: string;
-  top: number;
-  left: number;
-  // `side` controls where the default HUD sits relative to the planet.
-  // `hoverSide` controls which way the callout (revealed on hover) extends.
-  // They are intentionally decoupled so the default and hover layouts can
-  // sit on opposite sides of the planet (e.g. GSI default on the right,
-  // hover callout extending to the left).
-  side: "left" | "right";
-  hoverSide: "left" | "right";
 };
 
-// Bottom-up chronological order: oldest at the bottom, newest at the top.
-// Order in the array reflects DOM order; visual ordering is set by top/left.
-const planets: Planet[] = [
+// Top-down: most recent at the top, oldest at the bottom.
+// The last entry has no trail beneath it (no meteor below to point to).
+const experiences: Experience[] = [
   {
-    kind: "ati",
-    cluster: "ati",
-    company: "ATI",
-    role: "Automation Specialist",
-    dateStart: "Oct 2019",
-    dateEnd: "May 2023",
-    description:
-      "Configured and deployed PCVue-Seefox SCADA across 72 substations of the National Dispatch. Integrated K-Power Ship floating power plants into the national energy system. Modbus and IEC 60870-5 over the wire.",
-    top: 78,
-    left: 30,
-    side: "left",
-    hoverSide: "right",
-  },
-  {
-    kind: "gsi",
-    cluster: "gsi",
-    company: "GSI",
-    role: "Computer Science Specialist",
-    dateStart: "May 2023",
-    dateEnd: "Mar 2026",
-    description:
-      "Backend and full-stack across e-commerce, fintech, and healthcare insurance: .NET microservices, AWS Lambda, React/TS, Flutter mobile. Built an industrial SCADA system in WPF/.NET with PLC and RFID traceability.",
-    top: 48,
-    left: 60,
-    side: "right",
-    hoverSide: "left",
-  },
-  {
-    kind: "treew",
-    cluster: "treew",
-    company: "Treew",
     role: "Senior Software Engineer",
+    company: "Treew",
     dateStart: "Sept 2024",
     dateEnd: "Present",
     description:
       "Built 25+ backend microservices for e-commerce. Designed an AI Product Validator running 13 OpenAI agents in parallel with vector stores. Built a bulk SMS platform on Postgres LISTEN/NOTIFY with worker pools and SSE.",
-    top: 18,
-    left: 38,
-    side: "right",
-    hoverSide: "right",
+  },
+  {
+    role: "Computer Science Specialist",
+    company: "GSI",
+    dateStart: "May 2023",
+    dateEnd: "Mar 2026",
+    description:
+      "Backend and full-stack across e-commerce, fintech and healthcare insurance: .NET microservices, AWS Lambda, React/TS, Flutter mobile. Built an industrial SCADA in WPF/.NET with PLC and RFID traceability.",
+  },
+  {
+    role: "Automation Specialist",
+    company: "ATI",
+    dateStart: "Oct 2019",
+    dateEnd: "May 2023",
+    description:
+      "Configured and deployed PCVue-Seefox SCADA across 72 substations of the National Dispatch. Integrated K-Power Ship floating power plants. Modbus and IEC 60870-5 over the wire.",
   },
 ];
-
-// ============================================================
-// SKILL CONSTELLATION — data-driven layout
-// ============================================================
-// Each star carries its base (top, left) plus a `cluster` tag. The final
-// rendered position is `base + clusterOffsets[cluster]`. That gives two
-// orthogonal moves:
-//   - Move a single star within its cluster: edit its top/left below.
-//   - Move the whole cluster in lockstep: bump dx/dy in clusterOffsets.
-// ============================================================
-
-type SkillStar = {
-  cluster: Cluster;
-  glyph: string;
-  name: string;
-  cat: string;
-  coord: string;
-  magNum: string;
-  top: number;
-  left: number;
-  mag: 1 | 2 | 3 | 4;
-  size: "xs" | "sm" | "md" | "lg" | "xl";
-  tribe: "hw" | "sw";
-};
-
-const skillStars: SkillStar[] = [
-  // ATI cluster — industrial protocols + .NET desktop + SCADA platform.
-  { cluster: "ati", glyph: "Mb",  name: "Modbus",       cat: "protocol",       coord: "17h 12m · +38°", magNum: "m 1.9", top: 88, left: 42, mag: 2, size: "md", tribe: "hw" },
-  { cluster: "ati", glyph: "IEC", name: "IEC 60870-5",  cat: "protocol",       coord: "15h 02m · −22°", magNum: "m 4.1", top: 90, left: 10, mag: 4, size: "xs", tribe: "hw" },
-  { cluster: "ati", glyph: "Bz",  name: "Blazor",       cat: "web-ui",         coord: "15h 47m · +08°", magNum: "m 4.0", top: 75, left: 14, mag: 4, size: "xs", tribe: "sw" },
-  { cluster: "ati", glyph: "PCv", name: "PCVue",        cat: "scada-platform", coord: "16h 14m · −08°", magNum: "m 2.3", top: 64, left: 21, mag: 3, size: "sm", tribe: "hw" },
-
-  // Bridge ATI ↔ GSI — PLC at substations and bottling SCADA.
-  { cluster: "bridge-ag", glyph: "PLC", name: "Programmable Logic Controller", cat: "hardware", coord: "17h 38m · −26°", magNum: "m 2.5", top: 62, left: 45, mag: 3, size: "sm", tribe: "hw" },
-
-  // Bridge of 3 — closer to GSI/Treew than ATI.
-  { cluster: "bridge-3", glyph: "C#", name: "C#",         cat: "language", coord: "14h 22m · +57°", magNum: "m 0.6", top: 45, left: 44, mag: 1, size: "xl", tribe: "sw" },
-  { cluster: "bridge-3", glyph: "Ss", name: "SQL Server", cat: "database", coord: "17h 25m · +12°", magNum: "m 2.6", top: 40, left: 40, mag: 3, size: "sm", tribe: "sw" },
-
-  // GSI cluster — desktop SCADA + cloud.
-  { cluster: "gsi", glyph: "Wpf", name: "Windows Presentation Foundation", cat: "desktop-ui", coord: "14h 58m · +44°", magNum: "m 4.0", top: 63, left: 58, mag: 4, size: "xs", tribe: "sw" },
-  { cluster: "gsi", glyph: "Aws", name: "Amazon Web Services",             cat: "cloud",      coord: "15h 24m · −12°", magNum: "m 2.7", top: 55, left: 78, mag: 3, size: "sm", tribe: "sw" },
-
-  // Bridge GSI ↔ Treew — modern stack used at both.
-  { cluster: "bridge-gt", glyph: "Ts", name: "TypeScript", cat: "language",   coord: "15h 11m · +33°", magNum: "m 1.8", top: 22, left: 50, mag: 2, size: "md", tribe: "sw" },
-  { cluster: "bridge-gt", glyph: "Pg", name: "PostgreSQL", cat: "database",   coord: "17h 58m · +03°", magNum: "m 1.6", top: 29, left: 60, mag: 2, size: "md", tribe: "sw" },
-  { cluster: "bridge-gt", glyph: "Dk", name: "Docker",     cat: "containers", coord: "18h 31m · −16°", magNum: "m 2.8", top: 38, left: 70, mag: 3, size: "sm", tribe: "sw" },
-  { cluster: "bridge-gt", glyph: "Js", name: "JavaScript", cat: "language",   coord: "18h 04m · +49°", magNum: "m 2.5", top: 10, left: 52, mag: 3, size: "sm", tribe: "sw" },
-  { cluster: "bridge-gt", glyph: "Ht", name: "HTML",       cat: "web-markup", coord: "15h 12m · +18°", magNum: "m 4.2", top: 27, left: 47, mag: 4, size: "xs", tribe: "sw" },
-  { cluster: "bridge-gt", glyph: "Cs", name: "CSS",        cat: "web-style",  coord: "17h 48m · −04°", magNum: "m 4.3", top: 28, left: 50, mag: 4, size: "xs", tribe: "sw" },
-
-  // Treew cluster — Python (FastAPI) + MongoDB.
-  { cluster: "treew", glyph: "Py", name: "Python",  cat: "language", coord: "17h 41m · +28°", magNum: "m 2.6", top: 8,  left: 23, mag: 3, size: "sm", tribe: "sw" },
-  { cluster: "treew", glyph: "Mg", name: "MongoDB", cat: "database", coord: "18h 22m · +07°", magNum: "m 2.7", top: 18, left: 78, mag: 3, size: "sm", tribe: "sw" },
-
-  // Loose low-level — left-edge cluster, hardware/low-level skills.
-  { cluster: "loose-low", glyph: "μC",  name: "Microcontroller", cat: "hardware", coord: "15h 28m · +03°", magNum: "m 4.0", top: 62, left: 4,  mag: 4, size: "xs", tribe: "hw" },
-  { cluster: "loose-low", glyph: "Asm", name: "Assembler",       cat: "language", coord: "14h 06m · +24°", magNum: "m 4.4", top: 45, left: 4,  mag: 4, size: "xs", tribe: "sw" },
-  { cluster: "loose-low", glyph: "PCB", name: "PCB Design",      cat: "hardware", coord: "15h 51m · −34°", magNum: "m 2.4", top: 38, left: 10, mag: 3, size: "sm", tribe: "hw" },
-
-  // Loose isolated — scattered, no shared planet.
-  { cluster: "loose-iso", glyph: "Lx",  name: "Linux", cat: "os",            coord: "14h 48m · +18°", magNum: "m 4.2", top: 90, left: 80, mag: 4, size: "xs", tribe: "sw" },
-  { cluster: "loose-iso", glyph: "Re",  name: "React", cat: "web-framework", coord: "17h 14m · −18°", magNum: "m 4.0", top: 38, left: 90, mag: 4, size: "xs", tribe: "sw" },
-  { cluster: "loose-iso", glyph: "C++", name: "C++",   cat: "language",      coord: "14h 42m · −38°", magNum: "m 4.1", top: 88, left: 62, mag: 4, size: "xs", tribe: "sw" },
-];
 ---
+
+{/*
+  Hidden 0×0 svg holding reusable defs (asteroid silhouette + meteor symbol +
+  the gradients that paint body, leading-edge tint and crater pits). All
+  meteors below are rendered via <use href="#meteor"/>, so this block must
+  be in the DOM before the first reference.
+
+  Inline hex literals are intentional: they are SVG `stop-color` values, and
+  CSS custom properties (var(--color-*)) cannot be used as `stop-color` in
+  Astro's static SSR output. Each stop is annotated with its design-system
+  origin so updates stay in sync with global.css.
+*/}
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  <defs>
+    {/* BODY — terminator gradient (lit top-left → shadow bottom-right). */}
+    <radialGradient id="meteor-body" cx="32%" cy="28%" r="78%">
+      <stop offset="0%"   stop-color="#F4E5C8" stop-opacity="0.85"/>{/* --color-star-warm */}
+      <stop offset="22%"  stop-color="#E8B884" stop-opacity="0.55"/>{/* --color-star-amber */}
+      <stop offset="48%"  stop-color="#64748B" stop-opacity="1.00"/>{/* --color-text-muted */}
+      <stop offset="78%"  stop-color="#1A2030" stop-opacity="1.00"/>{/* --color-surface-2 */}
+      <stop offset="100%" stop-color="#0A0E1A" stop-opacity="1.00"/>{/* --color-background */}
+    </radialGradient>
+
+    {/* LEADING-EDGE warm tint — top arc only, hints at atmospheric heating. */}
+    <radialGradient id="meteor-rim-glow" cx="40%" cy="0%" r="60%">
+      <stop offset="0%"   stop-color="#E8B884" stop-opacity="0.32"/>{/* --color-star-amber */}
+      <stop offset="40%"  stop-color="#FB923C" stop-opacity="0.12"/>{/* --color-accent-primary */}
+      <stop offset="100%" stop-color="#FB923C" stop-opacity="0"/>
+    </radialGradient>
+
+    {/* CRATER FILL — dark pit pulled toward shadow side, lit-rim arc opposite. */}
+    <radialGradient id="crater-fill" cx="62%" cy="62%" r="60%">
+      <stop offset="0%"   stop-color="#0A0E1A" stop-opacity="0.78"/>
+      <stop offset="55%"  stop-color="#1A2030" stop-opacity="0.55"/>
+      <stop offset="78%"  stop-color="#64748B" stop-opacity="0.0"/>
+      <stop offset="92%"  stop-color="#F4E5C8" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#F4E5C8" stop-opacity="0"/>
+    </radialGradient>
+
+    {/* Asteroid silhouette — 12-vertex irregular outline around a 28-radius circle. */}
+    <clipPath id="asteroid-clip">
+      <path d="M 32 4 L 42 6 L 51 12 L 56 22 L 60 33 L 56 44 L 49 53 L 38 58 L 26 60 L 14 54 L 6 44 L 3 31 L 6 18 L 14 10 Z"/>
+    </clipPath>
+
+    <symbol id="meteor" viewBox="0 0 64 64" overflow="visible">
+      <g clip-path="url(#asteroid-clip)">
+        <path
+          d="M 32 4 L 42 6 L 51 12 L 56 22 L 60 33 L 56 44 L 49 53 L 38 58 L 26 60 L 14 54 L 6 44 L 3 31 L 6 18 L 14 10 Z"
+          fill="url(#meteor-body)"
+        />
+        <rect x="-4" y="-4" width="72" height="32" fill="url(#meteor-rim-glow)"/>
+
+        {/* 6 craters distributed asymmetrically. Sizes vary; same fill paints
+            the 3D depression effect (pit + lit-rim arc). */}
+        <ellipse cx="38" cy="20" rx="7"   ry="6.2" fill="url(#crater-fill)"/>
+        <ellipse cx="18" cy="32" rx="5.5" ry="5"   fill="url(#crater-fill)"/>
+        <ellipse cx="48" cy="36" rx="3.6" ry="3.4" fill="url(#crater-fill)"/>
+        <ellipse cx="22" cy="14" rx="2.4" ry="2.2" fill="url(#crater-fill)"/>
+        <ellipse cx="32" cy="46" rx="4.6" ry="4.2" fill="url(#crater-fill)"/>
+        <ellipse cx="44" cy="50" rx="2.8" ry="2.6" fill="url(#crater-fill)"/>
+
+        {/* Terminator deepener — extra shadow on the bottom-right hemisphere. */}
+        <ellipse cx="46" cy="48" rx="34" ry="30" fill="#0A0E1A" opacity="0.32"/>
+      </g>
+      {/* Hairline outline so the silhouette stays defined against dark backgrounds. */}
+      <path
+        d="M 32 4 L 42 6 L 51 12 L 56 22 L 60 33 L 56 44 L 49 53 L 38 58 L 26 60 L 14 54 L 6 44 L 3 31 L 6 18 L 14 10 Z"
+        fill="none" stroke="rgba(244,229,200,0.10)" stroke-width="0.6"
+      />
+    </symbol>
+  </defs>
+</svg>
 
 <section id="work" class="work">
   <div class="work-stage">
     <ChartFrame label="WORK · HARDWARE × SOFTWARE" />
 
-    <div class="constellation">
-      {skillStars.map((s) => {
-        const offset = clusterOffsets[s.cluster];
-        const top = s.top + offset.dy;
-        const left = s.left + offset.dx;
-        const showTwinkle = s.mag === 1 || s.mag === 2;
+    <div class="timeline">
+      {experiences.map((exp, idx) => {
+        const hasTrail = idx < experiences.length - 1;
+        const dropClass = idx === 0 ? "drop" : `drop delay-${idx}`;
         return (
-          <a
-            class:list={[
-              "star",
-              `tribe-${s.tribe}`,
-              `mag-${s.mag}`,
-              `sz-${s.size}`,
-              s.mag === 4 && "hide-sm",
-            ]}
-            style={`top: ${top}%; left: ${left}%;`}
-            href="#"
-            aria-label={s.name}
-          >
-            <span class="glyph">
-              {s.glyph}
-              {showTwinkle && <span class="twinkle"></span>}
-            </span>
-            <span class="catalog">
-              <span class="row1"><span class="name">{s.name}</span><span class="mag">{s.magNum}</span></span>
-              <span class="cat-coord">{s.coord}</span>
-              <span class="cat">{s.cat}</span>
-            </span>
-          </a>
-        );
-      })}
-    </div>
-
-    <div class="planets">
-      {planets.map((p) => {
-        const offset = clusterOffsets[p.cluster];
-        const top = p.top + offset.dy;
-        const left = p.left + offset.dx;
-        return (
-        <article
-          class:list={["planet-slot", `slot-${p.kind}`, `side-${p.side}`]}
-          style={`top: ${top}%; left: ${left}%;`}
-        >
-          <div class={`xstar ${p.kind}`}>
-            <div class="body">
-              {p.kind === "treew" && (
-                <>
-                  <div class="neb-haze"></div>
-                  <div class="neb-cloud"></div>
-                  <div class="neb-core"></div>
-                  <div class="neb-ring r1">
-                    <span class="neb-pip p1"></span>
-                    <span class="neb-pip p2"></span>
-                  </div>
-                  <div class="neb-ring r2"></div>
-                </>
-              )}
-
-              {p.kind === "gsi" && (
-                <>
-                  <div class="giant-rings">
-                    <div class="giant-ring outer"></div>
-                    <div class="giant-ring mid"></div>
-                    <div class="giant-ring inner"></div>
-                    <span class="ring-orbiter"></span>
-                  </div>
-                  <div class="giant-atm"></div>
-                  <div class="giant-body"></div>
-                  {/* Duplicate ring layer painted ABOVE the body, clipped to its
-                      bottom half. After the −18° rotation, that clipped strip
-                      reads as the ring's "front" arc wrapping in front of the
-                      planet, while the original layer below renders as the
-                      back arc passing behind it. */}
-                  <div class="giant-rings front">
-                    <div class="giant-ring outer"></div>
-                    <div class="giant-ring mid"></div>
-                    <div class="giant-ring inner"></div>
-                    <span class="ring-orbiter"></span>
-                  </div>
-                </>
-              )}
-
-              {p.kind === "ati" && (
-                <>
-                  <div class="pulsar-haze"></div>
-                  <div class="pulsar-beam"></div>
-                  <div class="pulsar-beam b2"></div>
-                  <div class="pulsar-ring r1"></div>
-                  <div class="pulsar-ring r2"></div>
-                  <div class="pulsar-ring r3"></div>
-                  <div class="pulsar-core"></div>
-                </>
+          <article class="row">
+            <div class="node-col">
+              <div class="meteor-wrap">
+                <svg class="meteor-svg" viewBox="0 0 64 64"><use href="#meteor"/></svg>
+              </div>
+              {hasTrail && (
+                <div class="trail-wrap">
+                  <div class="plume"></div>
+                  <div class={dropClass}></div>
+                </div>
               )}
             </div>
-
-            <div class="hud">
-              <span class="hud-line"></span>
-              <div class="hud-stack">
-                <h3 class="hud-company">{p.company}</h3>
-                <span class="hud-divider"></span>
-                <p class="hud-date">{p.dateStart}</p>
-                <p class="hud-desc">
-                  <span class="hud-role">{p.role}</span>
-                  {p.description}
-                </p>
+            <div class="content">
+              <div class="row-header">
+                <h3 class="row-company">{exp.company}</h3>
+                <p class="row-date">{exp.dateStart} — {exp.dateEnd}</p>
               </div>
+              <p class="row-role">{exp.role}</p>
+              <p class="row-desc">{exp.description}</p>
             </div>
-
-            <div class:list={["hud-callout", `hover-${p.hoverSide}`]} aria-hidden="true">
-              <svg class="hc-leader" viewBox="0 0 380 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                {p.hoverSide === "left" ? (
-                  <>
-                    {/* Diagonal up-LEFT at 30° (len 110) from planet center (380,150) to bend (285,95);
-                        horizontal (len 275) ends at far-left (10,95). */}
-                    <path class="hc-leader-stroke" d="M 380 150 L 285 95 L 10 95" />
-                    <circle class="hc-dot hc-dot-bend" cx="285" cy="95" r="2.5" />
-                    <circle class="hc-dot hc-dot-end" cx="10" cy="95" r="2.5" />
-                  </>
-                ) : (
-                  <>
-                    {/* Diagonal up-RIGHT at 30° (len 110) from planet center (0,150) to bend (95,95);
-                        horizontal (len 275) ends at far-right (370,95). */}
-                    <path class="hc-leader-stroke" d="M 0 150 L 95 95 L 370 95" />
-                    <circle class="hc-dot hc-dot-bend" cx="95" cy="95" r="2.5" />
-                    <circle class="hc-dot hc-dot-end" cx="370" cy="95" r="2.5" />
-                  </>
-                )}
-              </svg>
-
-              <div class="hc-row hc-row-top">
-                <span class="hc-company-out">{p.company}</span>
-                <span class="hc-date-out">{p.dateStart} &ndash; {p.dateEnd}</span>
-              </div>
-              <div class="hc-row hc-row-bottom">
-                <p class="hc-role-out">{p.role}</p>
-                <p class="hc-desc-out">{p.description}</p>
-              </div>
-            </div>
-          </div>
-        </article>
+          </article>
         );
       })}
     </div>
@@ -327,1288 +156,278 @@ const skillStars: SkillStar[] = [
     place-items: center;
     padding: 80px 24px 80px;
   }
+  /*
+   * No fixed aspect-ratio on the work-stage — the timeline is content-driven.
+   * The chart-frame (absolutely positioned chrome) wraps whatever height the
+   * timeline ends up with.
+   */
   .work-stage {
     position: relative;
     width: 100%;
     max-width: 1240px;
-    aspect-ratio: 16 / 10;
-    max-height: 88vh;
+    padding: 56px 64px 72px;
   }
-
-  .constellation {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    pointer-events: none;
-  }
-  .constellation > * { pointer-events: auto; }
 
   /* ============================================================
-     EXPERIENCE PLANETS — three celestial bodies, one per role
+     TIMELINE LAYOUT
      ============================================================ */
-  .planets {
-    position: absolute;
-    inset: 0;
-    z-index: 4;
-    pointer-events: none;
-  }
-  .planets > * { pointer-events: auto; }
-
-  .planet-slot {
-    position: absolute;
-    transform: translate(-50%, -50%);
-  }
-
-  .xstar {
-    position: relative;
-    width: 140px;
-    height: 140px;
-    isolation: isolate;
-  }
-
-  .xstar .body {
-    position: absolute;
-    inset: 0;
-  }
-
-  /* ----------- TREEW · emission nebula ----------- */
-  /* rgba literals match Claude Design source verbatim — preserves the exact perceptual mix that color-mix in oklch slightly differs from. */
-  .xstar.treew .neb-core {
-    position: absolute;
-    inset: 32%;
-    border-radius: 50%;
-    background:
-      radial-gradient(circle at 50% 50%,
-        var(--color-star-warm) 0%,
-        var(--color-accent-primary) 25%,
-        rgba(251, 146, 60, 0.0) 60%);
-    filter: blur(2px);
-    z-index: 3;
-    animation: neb-pulse 7s ease-in-out infinite;
-  }
-  .xstar.treew .neb-cloud {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background:
-      radial-gradient(circle at 38% 42%, rgba(251, 146, 60, 0.55) 0%, rgba(251, 146, 60, 0) 38%),
-      radial-gradient(circle at 64% 58%, rgba(34, 211, 238, 0.42) 0%, rgba(34, 211, 238, 0) 42%),
-      radial-gradient(circle at 50% 50%, rgba(244, 229, 200, 0.18) 0%, rgba(244, 229, 200, 0) 55%);
-    filter: blur(8px);
-    z-index: 2;
-    transition: filter 320ms ease;
-  }
-  .xstar.treew .neb-haze {
-    position: absolute;
-    inset: -16%;
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 50%,
-      rgba(34, 211, 238, 0.16), transparent 55%);
-    filter: blur(20px);
-    z-index: 1;
-    opacity: 0.85;
-    transition: opacity 320ms ease, transform 320ms ease;
-  }
-  .xstar.treew .neb-ring {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px dashed;
-    z-index: 4;
-    opacity: 0.42;
-    transition: opacity 280ms ease;
-  }
-  .xstar.treew .neb-ring.r1 {
-    inset: -4%;
-    border-color: var(--color-accent-primary);
-    animation: spin-cw 60s linear infinite;
-  }
-  .xstar.treew .neb-ring.r2 {
-    inset: -14%;
-    border-color: var(--color-accent-secondary);
-    border-style: dotted;
-    opacity: 0.32;
-    animation: spin-ccw 90s linear infinite;
-  }
-  .xstar.treew .neb-pip {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--color-star-warm);
-    box-shadow: 0 0 6px var(--color-star-warm);
-    z-index: 5;
-  }
-  .xstar.treew .neb-pip.p1 { top: -2px; left: 50%; transform: translateX(-50%); }
-  .xstar.treew .neb-pip.p2 {
-    bottom: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--color-accent-secondary);
-    box-shadow: 0 0 6px var(--color-accent-secondary);
-  }
-
-  .xstar.treew:hover .neb-core,
-  .xstar.treew:focus-within .neb-core {
-    filter: blur(1px) brightness(1.15);
-  }
-  .xstar.treew:hover .neb-haze,
-  .xstar.treew:focus-within .neb-haze {
-    opacity: 1;
-    transform: scale(1.08);
-  }
-  .xstar.treew:hover .neb-cloud,
-  .xstar.treew:focus-within .neb-cloud {
-    filter: blur(6px) brightness(1.1);
-  }
-  .xstar.treew:hover .neb-ring,
-  .xstar.treew:focus-within .neb-ring { opacity: 0.75; }
-
-  /* ----------- GSI · ringed gas giant (Saturn-style) ----------- */
-  /* rgba literals match Claude Design source verbatim — preserves the exact perceptual mix that color-mix in oklch slightly differs from. */
-  .xstar.gsi .giant-body {
-    position: absolute;
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background:
-      /* terminator shading */
-      radial-gradient(circle at 32% 32%,
-        rgba(244, 229, 200, 0.85) 0%,
-        rgba(232, 184, 132, 0.7) 18%,
-        rgba(232, 184, 132, 0.0) 42%),
-      /*
-       * Atmospheric bands — purple/magenta hex literals are inline on purpose:
-       * they are aesthetic primitives outside the design-system palette and an
-       * oklch mix between palette tokens produces a perceptually different shade.
-       * Keep the literals so this matches the Claude Design source exactly.
-       */
-      linear-gradient(
-        180deg,
-        #2a2030 0%,
-        #4a3848 18%,
-        #6a4a52 32%,
-        #8a5e58 44%,
-        #6e4a52 56%,
-        #4e3640 68%,
-        #382838 82%,
-        #1a1420 100%
-      );
-    box-shadow:
-      inset -10px -14px 36px rgba(0,0,0,0.7),
-      inset 6px 8px 18px rgba(244, 229, 200, 0.08),
-      0 0 50px rgba(232, 184, 132, 0.12);
-    z-index: 3;
-    transition: box-shadow 320ms ease;
-  }
-  .xstar.gsi .giant-atm {
-    position: absolute;
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(circle at 50% 50%,
-      rgba(232, 184, 132, 0) 60%,
-      rgba(232, 184, 132, 0.18) 70%,
-      rgba(232, 184, 132, 0) 78%);
-    z-index: 2;
-    transition: transform 320ms ease, opacity 320ms ease;
-  }
-  .xstar.gsi .giant-rings {
-    position: absolute;
-    width: 180px;
-    height: 46px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-18deg);
-    z-index: 1;
-    transition: transform 480ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .xstar.gsi .giant-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-  }
-  .xstar.gsi .giant-ring.outer {
-    border: 1px solid rgba(232, 184, 132, 0.35);
-    background: radial-gradient(ellipse at center,
-      transparent 60%,
-      rgba(232, 184, 132, 0.12) 70%,
-      rgba(232, 184, 132, 0.22) 80%,
-      transparent 92%);
-  }
-  .xstar.gsi .giant-ring.mid {
-    inset: 5px 12px;
-    border: 1px solid rgba(244, 229, 200, 0.25);
-    background: radial-gradient(ellipse at center,
-      transparent 55%,
-      rgba(244, 229, 200, 0.08) 75%,
-      transparent 90%);
-  }
-  .xstar.gsi .giant-ring.inner {
-    inset: 11px 24px;
-    border: 1px dashed rgba(34, 211, 238, 0.25);
-  }
-  /*
-   * Front-arc layer for the rings: same geometry, painted ABOVE the body,
-   * clipped to its bottom half so the ring appears to wrap around the
-   * planet (back arc behind, front arc in front). clip-path is applied
-   * before transform, so the bottom-half strip rotates with the ring.
-   *
-   * Claude Design's source had a `.giant-rings::after` rim highlight to
-   * suggest the front of the ring crossing the body; that pseudo was
-   * intentionally removed here because the .front layer above already
-   * provides that wrap-effect, and at the smaller portfolio scale the
-   * extremely flat 180x22 ellipse rendered the inset highlight as a
-   * stray straight-ish line drifting behind the planet body.
-   */
-  .xstar.gsi .giant-rings.front {
-    z-index: 4;
-    clip-path: inset(50% 0 0 0);
-  }
-
-  /*
-   * Orbiter — small bright pip travelling the elliptical ring path.
-   * One copy lives in each ring layer (back + front). Both follow the
-   * same offset-path and animation so they stay perfectly synced; at any
-   * frame the back-layer copy is occluded by the planet body where they
-   * overlap, and the front-layer copy is hidden by the layer's clip when
-   * it crosses the top half. The result is a single dot that visibly
-   * "wraps around" the planet as it orbits.
-   *
-   * Path is in .giant-rings local coordinates (180×46 box, ellipse
-   * center at 90,23, semi-axes 90 horizontal × 23 vertical), traced as
-   * two arcs that close back to the starting point.
-   */
-  .xstar.gsi .ring-orbiter {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--color-star-warm);
-    box-shadow:
-      0 0 4px var(--color-star-warm),
-      0 0 9px rgba(244, 229, 200, 0.55);
-    pointer-events: none;
-    offset-path: path('M 180 23 A 90 23 0 0 1 0 23 A 90 23 0 0 1 180 23');
-    offset-distance: 0%;
-    offset-rotate: 0deg;
-    animation: ring-orbit 14s linear infinite;
-    z-index: 6;
-  }
-  @keyframes ring-orbit {
-    to { offset-distance: 100%; }
-  }
-
-  .xstar.gsi:hover .giant-body,
-  .xstar.gsi:focus-within .giant-body {
-    box-shadow:
-      inset -10px -14px 36px rgba(0,0,0,0.7),
-      inset 6px 8px 18px rgba(244, 229, 200, 0.14),
-      0 0 80px rgba(232, 184, 132, 0.28);
-  }
-  .xstar.gsi:hover .giant-atm,
-  .xstar.gsi:focus-within .giant-atm {
-    transform: translate(-50%, -50%) scale(1.05);
-  }
-  .xstar.gsi:hover .giant-rings,
-  .xstar.gsi:focus-within .giant-rings {
-    transform: translate(-50%, -50%) rotate(-22deg);
-  }
-
-  /* ----------- ATI · pulsar (vivid yellow-orange core, hover-activated rings) ----------- */
-  /* rgba literals match Claude Design source verbatim — preserves the exact perceptual mix that color-mix in oklch slightly differs from. */
-  .xstar.ati .body {
-    overflow: visible;
-  }
-  .xstar.ati .pulsar-core {
-    position: absolute;
-    width: 62px;
-    height: 62px;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
     /*
-     * Deep ember stops (#8B3A0F, #3D1A05) are inline hex on purpose:
-     * they are aesthetic primitives outside the system palette and an
-     * oklch mix between accent-primary and background produces a
-     * perceptually different shade. Keep the literals so this matches
-     * the Claude Design source exactly.
+     * 808px = 96 (node-col) + 32 (gap) + 680 (matches .row-desc max-width).
+     * Centered with margin auto so the whole meteor + text block sits in
+     * the middle of the chart-frame instead of hugging the left edge.
      */
-    background:
-      radial-gradient(circle at 50% 50%,
-        var(--color-star-warm) 0%,
-        var(--color-star-amber) 18%,
-        var(--color-accent-primary) 42%,
-        #8B3A0F 70%,
-        #3D1A05 100%);
-    box-shadow:
-      0 0 24px rgba(232, 184, 132, 0.7),
-      0 0 48px rgba(251, 146, 60, 0.45),
-      0 0 96px rgba(251, 146, 60, 0.18),
-      inset -4px -4px 12px rgba(0,0,0,0.4),
-      inset 3px 3px 8px rgba(244, 229, 200, 0.5);
-    z-index: 5;
-    transition: box-shadow 320ms ease, transform 320ms ease;
+    max-width: 808px;
+    margin: 0 auto;
   }
-  .xstar.ati .pulsar-haze {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(circle at center,
-      rgba(251, 146, 60, 0.22) 0%,
-      rgba(251, 146, 60, 0.1) 25%,
-      transparent 55%);
-    filter: blur(6px);
-    z-index: 1;
-    opacity: 0.5;
-    transition: opacity 320ms ease, transform 320ms ease;
+  .row {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 32px;
+    align-items: flex-start;
+    position: relative;
   }
-  .xstar.ati .pulsar-ring {
-    position: absolute;
-    border: 1px solid var(--color-accent-primary);
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    z-index: 2;
-    opacity: 0;
-    transition: opacity 320ms ease;
-  }
-  .xstar.ati .pulsar-ring.r1 {
-    width: 80px;
-    height: 80px;
-    transform: translate(-50%, -50%);
-    border-color: rgba(251, 146, 60, 0.55);
-    animation: pulse-1 4.2s ease-out infinite;
-    animation-play-state: running;
-  }
-  .xstar.ati .pulsar-ring.r2 {
-    width: 90px;
-    height: 90px;
-    transform: translate(-50%, -50%);
-    border-color: rgba(232, 184, 132, 0.4);
-    border-style: dashed;
-    animation: pulse-2 5.4s ease-out infinite;
-    animation-play-state: running;
-  }
-  .xstar.ati .pulsar-ring.r3 {
-    width: 100px;
-    height: 100px;
-    transform: translate(-50%, -50%);
-    border-color: rgba(251, 146, 60, 0.25);
-    animation: pulse-3 6.6s ease-out infinite;
-    animation-play-state: running;
-  }
-  .xstar.ati .pulsar-beam {
-    position: absolute;
-    width: 200px;
-    height: 1px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(244, 229, 200, 0.4) 45%,
-      rgba(244, 229, 200, 0.7) 50%,
-      rgba(244, 229, 200, 0.4) 55%,
-      transparent 100%);
-    z-index: 4;
-    opacity: 0;
-    filter: blur(0.5px);
-    animation: spin-beam 18s linear infinite;
-    transition: opacity 320ms ease;
-  }
-  .xstar.ati .pulsar-beam.b2 {
-    animation-duration: 22s;
-    animation-direction: reverse;
-    transform: translate(-50%, -50%) rotate(60deg);
-  }
+  .row + .row { margin-top: 8px; }
 
-  .xstar.ati:hover .pulsar-core,
-  .xstar.ati:focus-within .pulsar-core,
-  .xstar.ati.is-hover .pulsar-core {
-    transform: translate(-50%, -50%) scale(1.08);
-    box-shadow:
-      0 0 36px rgba(232, 184, 132, 0.85),
-      0 0 80px rgba(251, 146, 60, 0.6),
-      0 0 140px rgba(251, 146, 60, 0.3),
-      inset -4px -4px 12px rgba(0,0,0,0.4),
-      inset 3px 3px 8px rgba(244, 229, 200, 0.6);
-  }
-  .xstar.ati:hover .pulsar-haze,
-  .xstar.ati:focus-within .pulsar-haze,
-  .xstar.ati.is-hover .pulsar-haze {
-    transform: translate(-50%, -50%) scale(1.1);
-    opacity: 1;
-  }
-  .xstar.ati:hover .pulsar-ring,
-  .xstar.ati:focus-within .pulsar-ring,
-  .xstar.ati.is-hover .pulsar-ring {
-    opacity: 1;
-  }
-  .xstar.ati:hover .pulsar-beam,
-  .xstar.ati:focus-within .pulsar-beam,
-  .xstar.ati.is-hover .pulsar-beam {
-    opacity: 0.55;
-  }
-  .xstar.ati:hover .pulsar-beam.b2,
-  .xstar.ati:focus-within .pulsar-beam.b2,
-  .xstar.ati.is-hover .pulsar-beam.b2 {
-    opacity: 0.3;
-  }
-
-  /* ============================================================
-     STAR-WARS HUD LABEL — connector line + side-mounted readout
-     ============================================================ */
-  .hud {
-    position: absolute;
-    top: 50%;
+  .node-col {
+    width: 96px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    pointer-events: none;
+    position: relative;
   }
-  /* `right` side: connector goes right from the planet edge */
-  .side-right .hud {
-    left: 100%;
-    flex-direction: row;
-    transform: translateY(-50%);
-  }
-  .side-left .hud {
-    right: 100%;
-    flex-direction: row-reverse;
-    transform: translateY(-50%);
-  }
-  .hud-line {
-    display: block;
-    width: 50px;
-    height: 1px;
-    background: var(--color-text-muted);
-    opacity: 0.4;
+  .meteor-wrap {
+    width: 64px;
+    height: 64px;
+    position: relative;
     flex-shrink: 0;
+    z-index: 2;
   }
-  .hud-stack {
-    pointer-events: auto;
-    display: flex;
-    flex-direction: column;
-    min-width: 140px;
-    max-width: 180px;
-    padding: 0 4px;
-  }
-  .side-left .hud-stack { align-items: flex-end; text-align: right; }
-  .side-right .hud-stack { align-items: flex-start; text-align: left; }
-
-  .hud-company {
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-    letter-spacing: -0.01em;
-    color: var(--color-text-primary);
-    margin: 0 0 6px;
-    line-height: 1.2;
-  }
-  .hud-divider {
-    display: block;
-    width: 100%;
-    height: 1px;
-    background: color-mix(in oklch, var(--color-border) 70%, transparent);
-    margin-bottom: 6px;
-  }
-  .hud-date {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-    margin: 0;
-  }
-  .hud-desc {
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    line-height: 1.55;
-    color: var(--color-text-secondary);
-    margin: 0;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition:
-      max-height 380ms cubic-bezier(0.2, 0.8, 0.2, 1),
-      opacity 280ms 80ms ease,
-      margin-top 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
-    text-wrap: pretty;
-  }
-  .hud-role {
-    display: block;
-    font-weight: 500;
-    color: var(--color-text-primary);
-    font-size: 12px;
-    margin-bottom: 4px;
-  }
-  /*
-   * The default .hud no longer reveals its inner description on hover —
-   * the HUD-callout handles that. Without this no-op rule, the previous
-   * 0→220px expansion of .hud-desc would grow the centered/bottom-anchored
-   * .hud container during the fade-out, producing an unintended upward
-   * drift on GSI and Treew before the opacity reached zero.
-   */
-  .xstar:hover .hud-desc,
-  .xstar:focus-within .hud-desc {
-    max-height: 0;
-    opacity: 0;
-    margin-top: 0;
-  }
-
-  /*
-   * ATI variant of the HUD: bottom-mounted, single-line "company · date",
-   * no connector line, no divider rule. Description still reveals on hover
-   * below the line. Other planets (treew, gsi) keep the side-mounted HUD.
-   */
-  .slot-ati .hud {
-    top: calc(100% + 12px);
-    left: 50%;
-    right: auto;
-    bottom: auto;
-    transform: translateX(-50%);
-    flex-direction: column;
-    align-items: center;
-  }
-  .slot-ati .hud-line { display: none; }
-  .slot-ati .hud-divider { display: none; }
-  .slot-ati .hud-stack {
-    display: block;
-    text-align: center;
-    min-width: 0;
-    max-width: 240px;
-    padding: 0;
-    align-items: center;
-  }
-  .slot-ati .hud-company {
-    margin: 0 0 2px;
-  }
-  .slot-ati .hud-date {
-    margin: 0;
-  }
-  .slot-ati .hud-desc {
-    display: block;
-    margin-top: 0;
-    text-align: center;
-  }
-
-  /*
-   * GSI default: same minimal style as ATI (no connector, no divider,
-   * vertical stack, centered text), but anchored to the RIGHT of the planet.
-   */
-  .slot-gsi .hud {
-    top: 50%;
-    left: calc(100% + 12px);
-    right: auto;
-    bottom: auto;
-    transform: translateY(-50%);
-    flex-direction: column;
-    align-items: center;
-  }
-  .slot-gsi .hud-line { display: none; }
-  .slot-gsi .hud-divider { display: none; }
-  .slot-gsi .hud-stack {
-    display: block;
-    text-align: center;
-    min-width: 0;
-    max-width: 240px;
-    padding: 0;
-    align-items: center;
-  }
-  .slot-gsi .hud-company { margin: 0 0 2px; }
-  .slot-gsi .hud-date { margin: 0; }
-  .slot-gsi .hud-desc {
-    display: block;
-    margin-top: 0;
-    text-align: center;
-  }
-
-  /*
-   * Treew default: same minimal style as ATI, anchored ABOVE the planet
-   * and offset to the LEFT of the planet center.
-   */
-  .slot-treew .hud {
-    top: auto;
-    left: 50%;
-    right: auto;
-    bottom: calc(100% + 12px);
-    transform: translateX(calc(-50% - 72px));
-    flex-direction: column;
-    align-items: center;
-  }
-  .slot-treew .hud-line { display: none; }
-  .slot-treew .hud-divider { display: none; }
-  .slot-treew .hud-stack {
-    display: block;
-    text-align: center;
-    min-width: 0;
-    max-width: 240px;
-    padding: 0;
-    align-items: center;
-  }
-  .slot-treew .hud-company { margin: 0 0 2px; }
-  .slot-treew .hud-date { margin: 0; }
-  .slot-treew .hud-desc {
-    display: block;
-    margin-top: 0;
-    text-align: center;
-  }
-
-  /* ============================================================
-     HUD-CALLOUT — diagonal leader + horizontal readout (hover)
-     The container is 380×150; one of its bottom corners is anchored
-     at the planet center via `hover-left` / `hover-right`, so the
-     callout extends into the corresponding upper quadrant.
-     ============================================================ */
-  .hud-callout {
-    position: absolute;
-    bottom: 50%;
-    width: 380px;
-    height: 150px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 200ms ease;
-    z-index: 6;
-  }
-  /* hover-left: bottom-right corner anchored at planet center (callout extends up-LEFT). */
-  .hud-callout.hover-left {
-    right: 50%;
-    left: auto;
-  }
-  /* hover-right: bottom-left corner anchored at planet center (callout extends up-RIGHT). */
-  .hud-callout.hover-right {
-    left: 50%;
-    right: auto;
-  }
-
-  .xstar:hover .hud-callout,
-  .xstar:focus-within .hud-callout {
-    opacity: 1;
-    pointer-events: auto;
-    transition: opacity 220ms 80ms ease;
-  }
-
-  /* Hide the default HUD on every planet while the callout takes over.
-     For GSI and Treew, the slot-specific rules below also nudge the label
-     toward the planet center so the fade reads as a "pull-in" rather than
-     a flat opacity drop. */
-  .xstar:hover .hud,
-  .xstar:focus-within .hud {
-    opacity: 0;
-    transition: opacity 180ms ease, transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
-    pointer-events: none;
-  }
-  /* On return-to-default, wait for the callout to fade out before the default
-     HUD reappears, so the two never visually overlap. */
-  .hud {
-    transition:
-      opacity 220ms 120ms ease,
-      transform 280ms 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-
-  /* GSI fade-out: pull toward the planet (which sits to the LEFT). */
-  .slot-gsi .xstar:hover .hud,
-  .slot-gsi .xstar:focus-within .hud {
-    transform: translateY(-50%) translateX(-14px);
-  }
-
-  /* Treew fade-out: pull toward the planet (which sits BELOW-RIGHT,
-     since the default label is anchored above and 32px to the left). */
-  .slot-treew .xstar:hover .hud,
-  .slot-treew .xstar:focus-within .hud {
-    transform: translateX(calc(-50% - 22px)) translateY(10px);
-  }
-
-  .hc-leader {
-    position: absolute;
-    inset: 0;
+  .meteor-svg {
     width: 100%;
     height: 100%;
     overflow: visible;
-  }
-  .hc-leader-stroke {
-    fill: none;
-    stroke: var(--color-accent-secondary);
-    stroke-width: 1;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    /* Path length: 110 (diagonal) + 275 (horizontal) = 385 */
-    stroke-dasharray: 390;
-    stroke-dashoffset: 390;
-    transition: stroke-dashoffset 720ms cubic-bezier(0.4, 0, 0.2, 1) 80ms;
-    filter: drop-shadow(0 0 3px color-mix(in oklch, var(--color-accent-secondary) 35%, transparent));
-  }
-  .xstar:hover .hc-leader-stroke,
-  .xstar:focus-within .hc-leader-stroke {
-    stroke-dashoffset: 0;
-  }
-
-  .hc-dot {
-    fill: var(--color-accent-secondary);
-    opacity: 0;
-    transition: opacity 180ms ease;
-    filter: drop-shadow(0 0 3px color-mix(in oklch, var(--color-accent-secondary) 60%, transparent));
-  }
-  /* Bend dot lands when the diagonal finishes drawing (~430ms in). */
-  .hc-dot-bend {
-    transition: opacity 180ms 470ms ease;
-  }
-  /* End dot lands when the horizontal finishes drawing (~800ms in). */
-  .hc-dot-end {
-    transition: opacity 180ms 800ms ease;
-  }
-  .xstar:hover .hc-dot,
-  .xstar:focus-within .hc-dot {
-    opacity: 1;
-  }
-
-  /* Top row: above the horizontal line at y=95.
-     Span depends on side (DOM order is always [company, date], so flex
-     space-between always lands company on visual left, date on visual right). */
-  .hc-row-top {
-    position: absolute;
-    top: 0;
-    height: 91px;
-    width: 275px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    padding-bottom: 4px;
-    pointer-events: none;
-  }
-  /* hover-left: horizontal spans x=10 (far end) → x=285 (bend). */
-  .hover-left .hc-row-top { left: 10px; }
-  /* hover-right: horizontal spans x=95 (bend) → x=370 (far end). */
-  .hover-right .hc-row-top { left: 95px; }
-  .hc-company-out {
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    letter-spacing: -0.01em;
-    color: var(--color-text-primary);
-    line-height: 1.2;
-    opacity: 0;
-    transform: translateX(-6px);
-    transition: opacity 280ms 380ms ease, transform 320ms 380ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .hc-date-out {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-    line-height: 1.2;
-    white-space: nowrap;
-    opacity: 0;
-    transform: translateX(6px);
-    transition: opacity 280ms 520ms ease, transform 320ms 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-
-  /* Bottom row: below the horizontal line. Role + description align toward
-     the FAR-END of the horizontal (i.e. the extreme away from the planet). */
-  .hc-row-bottom {
-    position: absolute;
-    top: 101px;
-    width: 275px; /* matches horizontal span */
-    pointer-events: none;
-  }
-  .hover-left .hc-row-bottom {
-    left: 10px;
-    text-align: left; /* far end is on the left */
-  }
-  .hover-right .hc-row-bottom {
-    left: 95px;
-    text-align: right; /* far end is on the right */
-  }
-  .hc-role-out {
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--color-text-primary);
-    margin: 0 0 4px;
-    line-height: 1.3;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: opacity 280ms 700ms ease, transform 320ms 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .hc-desc-out {
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--color-text-muted);
-    margin: 0;
-    text-wrap: pretty;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: opacity 320ms 800ms ease, transform 360ms 800ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-
-  .xstar:hover .hc-company-out,
-  .xstar:focus-within .hc-company-out,
-  .xstar:hover .hc-date-out,
-  .xstar:focus-within .hc-date-out,
-  .xstar:hover .hc-role-out,
-  .xstar:focus-within .hc-role-out,
-  .xstar:hover .hc-desc-out,
-  .xstar:focus-within .hc-desc-out {
-    opacity: 1;
-    transform: translate(0, 0);
+    filter: drop-shadow(0 2px 6px rgba(10, 14, 26, 0.6));
   }
 
   /* ============================================================
-     SKILL STARS — same visual language as before
+     TRAIL — hairline beam with cyan→orange vertical gradient and
+     a soft halo. The descending drop rides on top of it.
      ============================================================ */
-  .star {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-    --halo: color-mix(in oklch, var(--color-star-warm) 50%, transparent);
-    --tone: var(--color-star-warm);
-    text-decoration: none;
-  }
-
-  .star.mag-1 { animation: drift1 11s ease-in-out infinite; }
-  .star.mag-2 { animation: drift2 13s ease-in-out infinite; }
-  .star.mag-3 { animation: drift3 9s  ease-in-out infinite; }
-  .star.mag-4 { animation: drift4 14s ease-in-out infinite; }
-
-  @keyframes drift1 {
-    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-    50%      { transform: translate(-50%, -50%) translateY(-6px); }
-  }
-  @keyframes drift2 {
-    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-    50%      { transform: translate(-50%, -50%) translateY(5px); }
-  }
-  @keyframes drift3 {
-    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-    50%      { transform: translate(-50%, -50%) translateY(-4px); }
-  }
-  @keyframes drift4 {
-    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-    50%      { transform: translate(-50%, -50%) translateY(3px); }
-  }
-
-  .star .glyph {
+  .trail-wrap {
+    width: 4px;
+    flex: 1;
     position: relative;
-    display: grid;
-    place-items: center;
-    border-radius: 8px;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-primary);
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 500;
-    transition:
-      transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
-      border-color 0.3s,
-      box-shadow 0.4s,
-      background 0.3s;
+    margin-top: -4px;
+    min-height: 130px;
+    z-index: 1;
+    overflow: visible;
   }
 
-  .star.sz-xl .glyph { width: 56px; height: 56px; font-size: 16px; border-radius: 12px; }
-  .star.sz-lg .glyph { width: 48px; height: 48px; font-size: 14px; border-radius: 10px; }
-  .star.sz-md .glyph { width: 40px; height: 40px; font-size: 12px; }
-  .star.sz-sm .glyph { width: 32px; height: 32px; font-size: 11px; border-radius: 6px; }
-  .star.sz-xs .glyph { width: 26px; height: 26px; font-size: 10px; border-radius: 5px; }
-
-  .star.mag-1 .glyph {
-    opacity: 1.0;
-    box-shadow:
-      0 0 0 1px color-mix(in oklch, var(--color-text-primary) 2%, transparent),
-      0 4px 24px -8px color-mix(in oklch, var(--color-background) 60%, transparent);
-  }
-  .star.mag-2 .glyph { opacity: 0.92; }
-  .star.mag-3 .glyph { opacity: 0.78; }
-  .star.mag-4 .glyph { opacity: 0.55; }
-
-  .star.tribe-hw .glyph {
-    color: var(--color-accent-primary);
-    --halo: color-mix(in oklch, var(--color-accent-primary) 55%, transparent);
-  }
-  .star.tribe-sw .glyph {
-    color: var(--color-accent-secondary);
-    --halo: color-mix(in oklch, var(--color-accent-secondary) 50%, transparent);
-  }
-
-  .star .glyph::before {
-    content: "";
+  .plume {
     position: absolute;
-    inset: -14px;
-    border-radius: inherit;
-    background: radial-gradient(circle at center, var(--halo), transparent 65%);
-    opacity: 0;
-    transition: opacity 0.4s;
-    z-index: -1;
-    filter: blur(6px);
-  }
-
-  .star:hover .glyph,
-  .star:focus-visible .glyph {
-    transform: scale(1.08);
-    border-color: currentColor;
-    background: var(--color-surface-2);
-    opacity: 1;
-  }
-  .star:hover .glyph::before,
-  .star:focus-visible .glyph::before {
-    opacity: 1;
-  }
-
-  .catalog {
-    position: absolute;
-    top: calc(100% + 14px);
     left: 50%;
-    transform: translateX(-50%) translateY(4px);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    padding: 10px 14px;
-    min-width: 168px;
-    opacity: 0;
+    top: 0;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 100%;
+    overflow: visible;
     pointer-events: none;
-    transition: opacity 0.25s, transform 0.25s;
-    z-index: 10;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 8px 28px -8px color-mix(in oklch, var(--color-background) 70%, transparent);
-    display: block;
+    z-index: 1;
+    /*
+     * Vertical gradient narrating the career arc: cyan (--color-accent-secondary)
+     * at the top fades through cool/warm into orange (--color-accent-primary)
+     * and amber, dissolving to transparent right where the next meteor begins.
+     */
+    background: linear-gradient(
+      180deg,
+      rgba(34, 211, 238, 0.95) 0%,
+      rgba(184, 212, 232, 0.85) 22%,
+      rgba(244, 229, 200, 0.75) 48%,
+      rgba(251, 146, 60, 0.65) 72%,
+      rgba(232, 184, 132, 0.30) 92%,
+      rgba(244, 229, 200, 0) 100%
+    );
   }
-  .catalog::before {
+  .plume::before {
     content: "";
     position: absolute;
-    top: -5px;
     left: 50%;
-    transform: translateX(-50%) rotate(45deg);
-    width: 8px;
-    height: 8px;
-    background: var(--color-surface);
-    border-left: 1px solid var(--color-border);
-    border-top: 1px solid var(--color-border);
+    top: 0;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 100%;
+    background: inherit;
+    filter: blur(4px);
+    opacity: 0.45;
   }
-  .star:hover .catalog,
-  .star:focus-visible .catalog {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-    pointer-events: auto;
+
+  /* Descending shockwave — the heartbeat travelling along the beam. */
+  .drop {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, 0);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 50% 50%,
+      #FFFFFF 0%,
+      var(--drop-color, #B8D4E8) 40%,
+      rgba(184, 212, 232, 0) 100%
+    );
+    box-shadow:
+      0 0 8px var(--drop-color, #B8D4E8),
+      0 0 16px var(--drop-color, #B8D4E8);
+    pointer-events: none;
+    z-index: 3;
+    animation:
+      drop-fall 3s linear infinite,
+      drop-tint 3s linear infinite;
   }
-  .catalog .row1 {
+  /* Stagger the loops so the three trails breathe asynchronously. */
+  .drop.delay-1 { animation-delay: -1s, -1s; }
+  .drop.delay-2 { animation-delay: -2s, -2s; }
+
+  /* Micro-comet tail trailing the drop, painted in the local trail color. */
+  .drop::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 16px;
+    background: linear-gradient(
+      to top,
+      var(--drop-color, #B8D4E8) 0%,
+      rgba(184, 212, 232, 0) 100%
+    );
+    filter: blur(0.5px);
+    border-radius: 2px;
+  }
+
+  @keyframes drop-fall {
+    0%   { top: 0%;   opacity: 0; }
+    8%   { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+  /*
+   * Tint cycle keeps the drop's color in step with the trail gradient as it
+   * descends: cool at the top, warm near the bottom. Requires @property to
+   * register --drop-color as an animatable <color> — without it the tint
+   * snaps between keyframes instead of interpolating.
+   */
+  @keyframes drop-tint {
+    0%   { --drop-color: #B8D4E8; } /* --color-star-cool */
+    35%  { --drop-color: #22D3EE; } /* --color-accent-secondary */
+    55%  { --drop-color: #F4E5C8; } /* --color-star-warm */
+    80%  { --drop-color: #FB923C; } /* --color-accent-primary */
+    100% { --drop-color: #F4E5C8; } /* --color-star-warm */
+  }
+  @property --drop-color {
+    syntax: '<color>';
+    initial-value: #B8D4E8;
+    inherits: false;
+  }
+
+  /* ============================================================
+     TEXT BLOCK
+     ============================================================ */
+  .content {
+    padding-top: 4px;
+    padding-bottom: 16px;
+  }
+  /*
+   * Header row: company on the left (prominent cyan), date pushed to the
+   * right at the same baseline. flex-wrap kicks in on narrow widths so the
+   * date drops to its own line instead of squeezing the company name.
+   */
+  .row-header {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 4px;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin: 0 0 4px;
   }
-  .catalog .name {
+  .row-company {
     font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 13px;
-    color: var(--color-text-primary);
+    font-weight: 600;
+    font-size: 22px;
     letter-spacing: -0.01em;
-  }
-  .catalog .mag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--color-text-muted);
-    letter-spacing: 0.1em;
-  }
-  .catalog .cat-coord {
-    display: block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--color-text-secondary);
-    letter-spacing: 0.04em;
-    margin-bottom: 6px;
-  }
-  .catalog .cat {
-    display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    padding: 2px 6px;
-    border-radius: 3px;
-    border: 1px solid;
-  }
-  .star.tribe-hw .catalog .cat {
-    color: var(--color-accent-primary);
-    border-color: color-mix(in oklch, var(--color-accent-primary) 30%, transparent);
-  }
-  .star.tribe-sw .catalog .cat {
     color: var(--color-accent-secondary);
-    border-color: color-mix(in oklch, var(--color-accent-secondary) 30%, transparent);
+    margin: 0;
+    line-height: 1.2;
+  }
+  .row-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    letter-spacing: 0.04em;
+    margin: 0;
+    white-space: nowrap;
+  }
+  .row-role {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    letter-spacing: 0.005em;
+    margin: 0 0 14px;
+  }
+  .row-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0;
+    max-width: 680px;
+    text-wrap: pretty;
   }
 
-  .star .twinkle {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    border-radius: 50%;
-    background: var(--color-star-warm);
-    top: 4px;
-    right: 4px;
-    box-shadow: 0 0 4px var(--color-star-warm);
-    opacity: 0.6;
-    animation: twinkle 4s ease-in-out infinite;
-  }
-  .star.tribe-sw .twinkle {
-    background: var(--color-star-cool);
-    box-shadow: 0 0 4px var(--color-star-cool);
-  }
-  .star.tribe-hw .twinkle {
-    background: var(--color-star-amber);
-    box-shadow: 0 0 4px var(--color-star-amber);
-  }
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.25; transform: scale(0.85); }
-    50%      { opacity: 0.85; transform: scale(1.1); }
-  }
-  .star.mag-3 .twinkle, .star.mag-4 .twinkle { display: none; }
-
-  /* ============================================================
-     SHARED KEYFRAMES
-     ============================================================ */
-  @keyframes spin-cw  { to { transform: rotate(360deg); } }
-  @keyframes spin-ccw { to { transform: rotate(-360deg); } }
-  @keyframes neb-pulse {
-    0%, 100% { filter: blur(2px) brightness(1); }
-    50%      { filter: blur(2px) brightness(1.15); }
-  }
-  @keyframes spin-beam {
-    from { transform: translate(-50%, -50%) rotate(0deg); }
-    to   { transform: translate(-50%, -50%) rotate(360deg); }
-  }
-  @keyframes pulse-1 {
-    0%   { width: 80px;  height: 80px;  opacity: 0.75; }
-    100% { width: 200px; height: 200px; opacity: 0;    }
-  }
-  @keyframes pulse-2 {
-    0%   { width: 90px;  height: 90px;  opacity: 0.6;  }
-    100% { width: 220px; height: 220px; opacity: 0;    }
-  }
-  @keyframes pulse-3 {
-    0%   { width: 100px; height: 100px; opacity: 0.4;  }
-    100% { width: 250px; height: 250px; opacity: 0;    }
-  }
-
-  /* ============================================================
-     RESPONSIVE — mobile stacks planets, labels go below
-     ============================================================ */
   @media (max-width: 760px) {
-    .work-stage {
-      aspect-ratio: 4 / 5;
-      max-height: none;
-    }
-    .star.hide-sm { display: none; }
-
-    /* Stack planets vertically; ignore inline top/left so they reflow.
-       Use a small grid rather than absolute positioning at this width. */
-    .planets {
-      position: relative;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 56px;
-      padding: 32px 16px;
-      inset: auto;
-    }
-    .planet-slot {
-      position: relative;
-      top: auto !important;
-      left: auto !important;
-      transform: none;
-      justify-self: center;
-    }
-    .xstar { width: 110px; height: 110px; }
-    .xstar.gsi .giant-body { width: 76px; height: 76px; }
-    .xstar.gsi .giant-rings { width: 144px; height: 38px; }
-    .xstar.gsi .giant-atm { width: 88px; height: 88px; }
-    .xstar.ati .pulsar-core { width: 50px; height: 50px; }
-    .xstar.ati .pulsar-haze { width: 120px; height: 120px; }
-    .xstar.ati .pulsar-beam { width: 160px; }
-
-    /* HUD drops below the planet, connector becomes vertical */
-    .hud,
-    .side-left .hud,
-    .side-right .hud {
-      position: relative;
-      top: auto;
-      left: auto;
-      right: auto;
-      transform: none;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 16px;
-    }
-    .hud-line {
-      width: 1px;
-      height: 24px;
-    }
-    .hud-stack {
-      align-items: center !important;
-      text-align: center !important;
-      max-width: 240px;
-      padding-top: 8px;
-    }
-
-    /* No horizontal room for the HUD-callout on mobile;
-       fall back to the default vertical .hud below the planet. */
-    .hud-callout { display: none; }
-    .xstar:hover .hud,
-    .xstar:focus-within .hud {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .work-stage { padding: 40px 24px; }
+    .row { grid-template-columns: 64px 1fr; gap: 20px; }
+    .node-col { width: 64px; }
+    .meteor-wrap { width: 48px; height: 48px; }
+    .row-company { font-size: 17px; }
+    .row-date { font-size: 12px; }
+    .row-role { font-size: 13px; }
+    .row-desc { font-size: 13.5px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .star,
-    .star .twinkle,
-    .xstar.treew .neb-core,
-    .xstar.treew .neb-ring,
-    .xstar.treew .neb-ring.r1,
-    .xstar.treew .neb-ring.r2,
-    .xstar.ati .pulsar-ring,
-    .xstar.ati .pulsar-beam,
-    .xstar.gsi .ring-orbiter {
+    /*
+     * Beam + halo + gradient stay; only the descending nucleus stops, so the
+     * structure of the timeline never collapses into disconnected nodes.
+     */
+    .drop {
       animation: none !important;
+      display: none !important;
     }
-    .star .glyph,
-    .xstar .neb-cloud,
-    .xstar .neb-haze,
-    .xstar .giant-body,
-    .xstar .giant-atm,
-    .xstar .giant-rings,
-    .xstar .pulsar-core,
-    .xstar .pulsar-haze,
-    .xstar .pulsar-ring,
-    .xstar .pulsar-beam,
-    .hud-desc {
-      transition: none !important;
-    }
-    .xstar.ati:hover .pulsar-ring,
-    .xstar.ati:focus-within .pulsar-ring,
-    .xstar.ati.is-hover .pulsar-ring {
-      opacity: 0.5;
-    }
-    .xstar.ati:hover .pulsar-beam,
-    .xstar.ati:focus-within .pulsar-beam,
-    .xstar.ati.is-hover .pulsar-beam {
-      opacity: 0.4;
-    }
-
-    /* HUD-callout: snap to final state, no draw or stagger. */
-    .hud-callout,
-    .hc-leader-stroke,
-    .hc-dot,
-    .hc-company-out,
-    .hc-date-out,
-    .hc-role-out,
-    .hc-desc-out {
-      transition: none !important;
-    }
-    .xstar:hover .hc-leader-stroke,
-    .xstar:focus-within .hc-leader-stroke {
-      stroke-dashoffset: 0;
-    }
-
-    /* Focus-blur: drop the visual deemphasis under reduced-motion. */
-    .work-stage:has(.xstar:hover) .constellation,
-    .work-stage:has(.xstar:focus-within) .constellation,
-    .work-stage:has(.xstar:hover) .planet-slot:not(:has(.xstar:hover)),
-    .work-stage:has(.xstar:focus-within) .planet-slot:not(:has(.xstar:focus-within)) {
-      filter: none;
-      opacity: 1;
-    }
-  }
-
-  /* ============================================================
-     FOCUS-BLUR (in-section) — when one of the experience-planets
-     is hovered, blur and dim everything else inside the work-stage
-     so the eye stays on the selected planet and its readout.
-     The .chart-frame (observatory chrome: corners, ticks, RA/Dec
-     labels, chart label, chart meta) is intentionally NOT blurred —
-     it lives in the foreground plane along with the site header.
-     The page-level chrome (starfield, other sections) is handled
-     by the <style is:global> block further below.
-     ============================================================ */
-  .constellation,
-  .planet-slot {
-    transition: filter 360ms ease, opacity 360ms ease;
-  }
-  .work-stage:has(.xstar:hover) .constellation,
-  .work-stage:has(.xstar:focus-within) .constellation,
-  .work-stage:has(.xstar:hover) .planet-slot:not(:has(.xstar:hover)),
-  .work-stage:has(.xstar:focus-within) .planet-slot:not(:has(.xstar:focus-within)) {
-    filter: blur(5px);
-    opacity: 0.4;
   }
 </style>
 
 <style is:global>
   /*
-   * Focus-blur (page-wide): when any experience-planet inside the work
-   * section is hovered, dim and blur the BACKGROUND plane of the page.
-   *
-   * Plane model:
-   *   - Foreground (always sharp): the site header (.site-header) and
-   *     every chart-frame across all sections (corner brackets, ticks,
-   *     RA/Dec labels, section title, chart-meta footer) — these are
-   *     the "telescope chrome" the user is looking THROUGH.
-   *   - Mid (planets and HUD): handled by Work's scoped rules.
-   *   - Background (gets blurred): the starfield (.sky + .stars) and
-   *     every stage's non-chart-frame children (constellation in each
-   *     section, hero text, projects cards, contact platforms, etc.).
-   *
-   * The Work section's own internal blur (constellation + non-hovered
-   * planet slots) is handled by the scoped block above — that's why
-   * .work-stage isn't included in the page-level rules below.
+   * Shared transition setup for the page-wide focus-blur effects driven
+   * by other sections (Projects today; Hero/Contact later if they add
+   * their own hover triggers). The actual filter/opacity changes live
+   * in each driving section's own <style is:global> block — this rule
+   * just ensures those changes fade smoothly across the page chrome.
    */
   .sky,
   .stars,
   .hero-stage > *:not(.chart-frame),
+  .work-stage > *:not(.chart-frame),
   .projects-stage > *:not(.chart-frame),
   .contact-stage > *:not(.chart-frame) {
     transition: filter 360ms ease, opacity 360ms ease;
-  }
-
-  body:has(.work-stage .xstar:hover) > .sky,
-  body:has(.work-stage .xstar:hover) > .stars,
-  body:has(.work-stage .xstar:focus-within) > .sky,
-  body:has(.work-stage .xstar:focus-within) > .stars,
-  body:has(.work-stage .xstar:hover) .hero-stage > *:not(.chart-frame),
-  body:has(.work-stage .xstar:hover) .projects-stage > *:not(.chart-frame),
-  body:has(.work-stage .xstar:hover) .contact-stage > *:not(.chart-frame),
-  body:has(.work-stage .xstar:focus-within) .hero-stage > *:not(.chart-frame),
-  body:has(.work-stage .xstar:focus-within) .projects-stage > *:not(.chart-frame),
-  body:has(.work-stage .xstar:focus-within) .contact-stage > *:not(.chart-frame) {
-    filter: blur(5px);
-    opacity: 0.4;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    body:has(.work-stage .xstar:hover) > .sky,
-    body:has(.work-stage .xstar:hover) > .stars,
-    body:has(.work-stage .xstar:focus-within) > .sky,
-    body:has(.work-stage .xstar:focus-within) > .stars,
-    body:has(.work-stage .xstar:hover) .hero-stage > *:not(.chart-frame),
-    body:has(.work-stage .xstar:hover) .projects-stage > *:not(.chart-frame),
-    body:has(.work-stage .xstar:hover) .contact-stage > *:not(.chart-frame),
-    body:has(.work-stage .xstar:focus-within) .hero-stage > *:not(.chart-frame),
-    body:has(.work-stage .xstar:focus-within) .projects-stage > *:not(.chart-frame),
-    body:has(.work-stage .xstar:focus-within) .contact-stage > *:not(.chart-frame) {
-      filter: none;
-      opacity: 1;
-    }
   }
 </style>
