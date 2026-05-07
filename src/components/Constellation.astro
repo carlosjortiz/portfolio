@@ -45,7 +45,7 @@
       <span class="catalog">
         <span class="row1"><span class="name">Industrial protocols</span><span class="mag">m 0.7</span></span>
         <span class="cat-coord">14h 58m · +14°</span>
-        <span class="cat">Modbus · IEC 60870 · OPC UA · Profibus</span>
+        <span class="cat">Modbus · Profibus</span>
       </span>
     </a>
   </div>
@@ -221,6 +221,20 @@
     inset: 0;
     z-index: 3;
   }
+  /*
+   * Promote the whole constellation above .hero-text (z-index: 4) only
+   * while a star inside is being hovered or keyboard-focused. Without
+   * this, the catalog popup of any star sitting under the headline /
+   * lede would be visually masked by the text — even though the text
+   * has pointer-events: none and lets the hover happen, the stacking
+   * order keeps it painted on top. When nobody is interacting, the
+   * constellation drops back to z=3 so the hero text reads cleanly
+   * above the ambient star field.
+   */
+  .constellation:has(.star:hover),
+  .constellation:has(.star:focus-visible) {
+    z-index: 5;
+  }
 
   /*
    * Mini-cluster wrapper carries the GROUP'S position. Width/height: 0 so it
@@ -343,6 +357,19 @@
   .star:hover .glyph::before,
   .star:focus-visible .glyph::before {
     opacity: 1;
+  }
+
+  /*
+   * Promote the hovered/focused star above its siblings so its catalog
+   * popup is never occluded by adjacent stars (especially inside tight
+   * mini-clusters where stars overlap spatially). Each .star is its own
+   * stacking context via the translate(-50%, -50%) transform, so the
+   * catalog's own z-index can't escape it — only lifting the whole .star
+   * pulls the catalog above sibling stars rendered later in DOM order.
+   */
+  .star:hover,
+  .star:focus-visible {
+    z-index: 100;
   }
 
   .catalog {
