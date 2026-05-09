@@ -41,7 +41,7 @@
       </span>
     </a>
     <a class="star tribe-hw mag-3 sz-sm" style="top: 20px; left: -50px;" href="#" aria-label="Industrial protocols">
-      <span class="glyph">⇄</span>
+      <span class="glyph glyph-protocols">⇄</span>
       <span class="catalog">
         <span class="row1"><span class="name">Industrial protocols</span><span class="mag">m 0.7</span></span>
         <span class="cat-coord">14h 58m · +14°</span>
@@ -53,7 +53,7 @@
   {/* ============== MINI-CLUSTER — Linux + Windows + Arch (OS family) ============== */}
   <div class="mini-cluster" style="top: 92%; left: 50%;">
     <a class="star tribe-neu mag-2 sz-xl" href="#" aria-label="Linux">
-      <span class="glyph">Lx<span class="twinkle"></span></span>
+      <span class="glyph">Linux<span class="twinkle"></span></span>
       <span class="catalog">
         <span class="row1"><span class="name">Linux</span><span class="mag">m 1.6</span></span>
         <span class="cat-coord">16h 00m · −28°</span>
@@ -61,7 +61,7 @@
       </span>
     </a>
     <a class="star tribe-neu mag-3 sz-md" style="top: -37px; left: 55px;" href="#" aria-label="Windows">
-      <span class="glyph">Wn</span>
+      <span class="glyph">Win</span>
       <span class="catalog">
         <span class="row1"><span class="name">Windows</span><span class="mag">m 2.5</span></span>
         <span class="cat-coord">16h 22m · −18°</span>
@@ -69,7 +69,7 @@
       </span>
     </a>
     <a class="star tribe-neu mag-3 sz-sm" style="top: -20px; left: -50px;" href="#" aria-label="Arch Linux">
-      <span class="glyph">Ax</span>
+      <span class="glyph">Arch</span>
       <span class="catalog">
         <span class="row1"><span class="name">Arch Linux</span><span class="mag">m 2.7</span></span>
         <span class="cat-coord">15h 38m · −34°</span>
@@ -81,7 +81,7 @@
   {/* ============== MINI-CLUSTER — .NET + C# ============== */}
   <div class="mini-cluster" style="top: 14%; left: 52%;">
     <a class="star tribe-sw mag-1 sz-xl" href="#" aria-label=".NET">
-      <span class="glyph">.Nt<span class="twinkle"></span></span>
+      <span class="glyph">.NET<span class="twinkle"></span></span>
       <span class="catalog">
         <span class="row1"><span class="name">.NET</span><span class="mag">m 0.3</span></span>
         <span class="cat-coord">16h 00m · +58°</span>
@@ -141,7 +141,7 @@
   {/* ============== MINI-CLUSTER — REST API + GraphQL ============== */}
   <div class="mini-cluster" style="top: 70%; left: 92%;">
     <a class="star tribe-sw mag-2 sz-lg" href="#" aria-label="REST API">
-      <span class="glyph">Rs</span>
+      <span class="glyph">REST</span>
       <span class="catalog">
         <span class="row1"><span class="name">REST API</span><span class="mag">m 2.5</span></span>
         <span class="cat-coord">18h 06m · −04°</span>
@@ -149,7 +149,7 @@
       </span>
     </a>
     <a class="star tribe-sw mag-3 sz-sm" style="top: 23px; left: -50px;" href="#" aria-label="GraphQL">
-      <span class="glyph">Gq</span>
+      <span class="glyph">GQL</span>
       <span class="catalog">
         <span class="row1"><span class="name">GraphQL</span><span class="mag">m 2.7</span></span>
         <span class="cat-coord">18h 22m · −12°</span>
@@ -189,7 +189,7 @@
       </span>
     </a>
     <a class="star tribe-sw mag-3 sz-sm" style="top: -23px; left: 50px;" href="#" aria-label="Assembler">
-      <span class="glyph">Asm</span>
+      <span class="glyph">ASM</span>
       <span class="catalog">
         <span class="row1"><span class="name">Assembler</span><span class="mag">m 2.8</span></span>
         <span class="cat-coord">14h 06m · +24°</span>
@@ -205,7 +205,7 @@
       </span>
     </a>
     <a class="star tribe-hw mag-4 sz-xs" style="top: -30px; left: -38px;" href="#" aria-label="Sensors">
-      <span class="glyph">∿</span>
+      <span class="glyph glyph-sensor"><span class="sensor-mark">∿</span></span>
       <span class="catalog">
         <span class="row1"><span class="name">Sensor</span><span class="mag">m 4.2</span></span>
         <span class="cat-coord">15h 48m · −18°</span>
@@ -313,6 +313,18 @@
   .star.sz-md .glyph { width: 40px; height: 40px; font-size: 12px; }
   .star.sz-sm .glyph { width: 32px; height: 32px; font-size: 11px; }
   .star.sz-xs .glyph { width: 26px; height: 26px; font-size: 10px; }
+
+  .star .glyph.glyph-sensor {
+    font-size: 16px;
+  }
+  .star .glyph.glyph-protocols {
+    font-size: 16px;
+  }
+  .sensor-mark {
+    display: block;
+    line-height: 1;
+    transform: translateY(-0.06em);
+  }
 
   .star.mag-1 .glyph {
     opacity: 1.0;
