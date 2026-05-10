@@ -27,7 +27,7 @@ const { label } = Astro.props;
   <span class="coord ra-2">RA 18h</span>
   <span class="coord dec-1">+42°</span>
   <span class="coord dec-2">−18°</span>
-  <span class="chart-meta">EPOCH J2025.5 <span class="sep">·</span> MAG ≤ 4.2 <span class="sep">·</span> N=12</span>
+  <span class="chart-meta"><span class="mark">&copy;</span> 2025 CARLOS J. ORTIZ</span>
 </div>
 
 <style>
@@ -127,9 +127,11 @@ const { label } = Astro.props;
     color: var(--color-text-muted);
     opacity: 0.85;
   }
-  .chart-meta .sep {
-    color: var(--color-border);
-    margin: 0 10px;
+  .chart-meta .mark {
+    font-size: 14px;
+    vertical-align: -0.08em;
+    letter-spacing: 0;
+    margin-right: 2px;
   }
 
   @media (max-width: 760px) {
