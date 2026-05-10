@@ -28,11 +28,179 @@ import Contact from "../components/Contact.astro";
 	<body>
 		<Starfield />
 		<Header />
-		<Hero />
-		<Work />
-		<Projects />
-		<Contact />
+		<main class="section-stack">
+			<Hero />
+			<Work />
+			<Projects />
+			<Contact />
+		</main>
 		<ViewerFrame />
+		<script>
+			/*
+			 * Section-swap navigation.
+			 *
+			 * All four sections live inside .section-stack and use
+			 * data-position="active|prev|next" to pick their slot.
+			 * Wheel, keyboard, touch and header anchor clicks dispatch
+			 * goTo(targetIdx) — siblings between the outgoing and
+			 * incoming pair are repositioned silently via .no-transition
+			 * so only the visible pair animates.
+			 */
+			const stack = document.querySelector<HTMLElement>('.section-stack');
+			if (stack) {
+				const sections = Array.from(
+					stack.querySelectorAll<HTMLElement>(':scope > section')
+				);
+				const sectionIds = sections.map((s) => s.id);
+
+				let currentIdx = 0;
+				let animating = false;
+				const TRANSITION_MS = 650;
+				const COOLDOWN_MS = 800;
+				const WHEEL_THRESHOLD = 30;
+				const TOUCH_THRESHOLD = 50;
+
+				// Initial state: first section active, the rest stacked below.
+				sections.forEach((sec, i) => {
+					sec.dataset.position = i === 0 ? 'active' : 'next';
+				});
+
+				function goTo(targetIdx: number) {
+					if (animating) return;
+					if (targetIdx < 0 || targetIdx >= sections.length) return;
+					if (targetIdx === currentIdx) return;
+
+					animating = true;
+					document.body.classList.add('is-warping');
+
+					const direction = targetIdx > currentIdx ? 'forward' : 'backward';
+					const exitPos = direction === 'forward' ? 'prev' : 'next';
+					const enterFromPos = direction === 'forward' ? 'next' : 'prev';
+
+					const outgoing = sections[currentIdx];
+					const incoming = sections[targetIdx];
+
+					// Snap intermediate sections silently to their final slot.
+					sections.forEach((sec, i) => {
+						if (sec === outgoing || sec === incoming) return;
+						sec.classList.add('no-transition');
+						sec.dataset.position = i < targetIdx ? 'prev' : 'next';
+					});
+
+					// Snap the incoming section to its starting slot if needed.
+					if (incoming.dataset.position !== enterFromPos) {
+						incoming.classList.add('no-transition');
+						incoming.dataset.position = enterFromPos;
+					}
+
+					// Force reflow so the snapped positions take effect before
+					// re-enabling transitions.
+					void stack!.offsetHeight;
+
+					sections.forEach((sec) => sec.classList.remove('no-transition'));
+
+					// Force one more reflow before the actual animation, so
+					// browsers register the transition from the new starting
+					// position rather than collapsing the two style changes.
+					void stack!.offsetHeight;
+
+					outgoing.dataset.position = exitPos;
+					incoming.dataset.position = 'active';
+
+					setTimeout(() => {
+						document.body.classList.remove('is-warping');
+					}, TRANSITION_MS);
+
+					setTimeout(() => {
+						animating = false;
+						currentIdx = targetIdx;
+					}, COOLDOWN_MS);
+				}
+
+				// --- input: wheel ----------------------------------------
+				window.addEventListener(
+					'wheel',
+					(e) => {
+						if (animating) return;
+						if (Math.abs(e.deltaY) < WHEEL_THRESHOLD) return;
+						if (e.deltaY > 0) goTo(currentIdx + 1);
+						else if (e.deltaY < 0) goTo(currentIdx - 1);
+					},
+					{ passive: true }
+				);
+
+				// --- input: keyboard -------------------------------------
+				window.addEventListener('keydown', (e) => {
+					if (animating) return;
+					switch (e.key) {
+						case 'ArrowDown':
+						case 'PageDown':
+							e.preventDefault();
+							goTo(currentIdx + 1);
+							break;
+						case 'ArrowUp':
+						case 'PageUp':
+							e.preventDefault();
+							goTo(currentIdx - 1);
+							break;
+						case 'Home':
+							e.preventDefault();
+							goTo(0);
+							break;
+						case 'End':
+							e.preventDefault();
+							goTo(sections.length - 1);
+							break;
+					}
+				});
+
+				// --- input: touch ----------------------------------------
+				let touchStartY: number | null = null;
+				window.addEventListener(
+					'touchstart',
+					(e) => {
+						touchStartY = e.touches[0].clientY;
+					},
+					{ passive: true }
+				);
+				window.addEventListener(
+					'touchend',
+					(e) => {
+						if (touchStartY === null || animating) return;
+						const diff = touchStartY - e.changedTouches[0].clientY;
+						touchStartY = null;
+						if (Math.abs(diff) < TOUCH_THRESHOLD) return;
+						if (diff > 0) goTo(currentIdx + 1);
+						else goTo(currentIdx - 1);
+					},
+					{ passive: true }
+				);
+
+				// --- input: header anchor links --------------------------
+				document
+					.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')
+					.forEach((a) => {
+						a.addEventListener('click', (e) => {
+							const href = a.getAttribute('href');
+							if (!href) return;
+							const idx = sectionIds.indexOf(href.slice(1));
+							if (idx === -1) return;
+							e.preventDefault();
+							goTo(idx);
+						});
+					});
+
+				// --- input: home logo ('/') ------------------------------
+				document
+					.querySelectorAll<HTMLAnchorElement>('a[href="/"]')
+					.forEach((a) => {
+						a.addEventListener('click', (e) => {
+							e.preventDefault();
+							goTo(0);
+						});
+					});
+			}
+		</script>
 		<style is:global>
 			body {
 				font-family: 'Inter', system-ui, -apple-system, Segoe UI, sans-serif;

@@ -40,6 +40,88 @@
     background: var(--color-background);
     color: var(--color-text-primary);
     margin: 0;
+    height: 100%;
+    overflow: hidden;
   }
-  body { overflow-x: hidden; }
+}
+
+/*
+ * Section-swap navigation rules — kept OUTSIDE @layer base on purpose.
+ * Astro's component-scoped styles (.hero, .work, .projects, .contact)
+ * are non-layered, and the cascade resolves layer order BEFORE
+ * specificity: any non-layered rule beats any layered rule of equal or
+ * lesser specificity. Putting these rules at top level (no layer) lets
+ * them compete with component styles on raw specificity, which they win
+ * thanks to the .section-stack > section selector being more specific
+ * than the bare .hero / .work / etc. component selectors.
+ */
+.section-stack {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 76px);
+  overflow: hidden;
+}
+/*
+ * !important on the layout-critical properties: each section component
+ * (Hero, Work, Projects, Contact) carries its own scoped `.hero { position:
+ * relative }` etc. Astro 6 may scope those with attribute selectors that
+ * out-specificity our `.section-stack > section` selector. !important
+ * sidesteps that race deterministically — these are deliberate global
+ * overrides for the section-swap layout, not collateral to fight.
+ */
+.section-stack > section {
+  position: absolute !important;
+  inset: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(100%) !important;
+  transition:
+    opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+.section-stack > section[data-position="active"] {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateY(0) !important;
+}
+.section-stack > section[data-position="prev"] {
+  transform: translateY(-100%) !important;
+  opacity: 0 !important;
+}
+.section-stack > section[data-position="next"] {
+  transform: translateY(100%) !important;
+  opacity: 0 !important;
+}
+/*
+ * When a section is being repositioned silently (i.e. it's not the
+ * outgoing or incoming pair in the current transition), suppress the
+ * transition so it snaps invisibly to its new slot.
+ */
+.section-stack > section.no-transition {
+  transition: none !important;
+}
+
+/*
+ * Motion-blur warp on the starfield while a section transition runs.
+ * Toggled by the goTo() script via body.is-warping.
+ */
+body.is-warping .sky,
+body.is-warping .stars {
+  filter: blur(1.6px);
+  transition: filter 220ms ease-out;
+}
+body:not(.is-warping) .sky,
+body:not(.is-warping) .stars {
+  transition: filter 320ms ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-stack > section {
+    transition: none;
+  }
+  body.is-warping .sky,
+  body.is-warping .stars {
+    filter: none;
+  }
 }
