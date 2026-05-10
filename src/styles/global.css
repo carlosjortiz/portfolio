@@ -103,17 +103,56 @@
 }
 
 /*
- * Motion-blur warp on the starfield while a section transition runs.
- * Toggled by the goTo() script via body.is-warping.
+ * Hide the SVG filter defs container (inline at top of <body>). The filters
+ * inside it remain usable via filter: url(#warp-blur) on any element.
  */
+.filter-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/*
+ * Telescope-pan warp effect on the starfield during section transitions.
+ * Toggled by the goTo() script via body.is-warping.
+ *
+ * Three coordinated effects layered on top of each other to mimic what a
+ * fast-panning telescope produces optically (vs. an isotropic blur which
+ * would look like defocus, not motion):
+ *
+ *   1. DIRECTIONAL MOTION BLUR — SVG #warp-blur (stdDeviation="0 12") gives
+ *      vertical-only Gaussian blur. Stars smear along the pan axis, like a
+ *      long-exposure during a fast pan. Applied to .sky and .stars.
+ *
+ *   2. STAR-TRAIL ELONGATION — scaleY(3) on .stars stretches each star dot
+ *      into a vertical line. The radial-gradient stars become elliptical,
+ *      reading as light streaks rather than dots. Animates smoothly.
+ *
+ *   3. HALO BLOOM — .stars::after (the largest, blurred halo layer) bumps
+ *      from opacity 0.45 to 0.95 during warp, making bright stars briefly
+ *      "explode" with light as they smear — the same effect bright stars
+ *      give in panned long-exposure astrophotography.
+ *
+ * scaleY uses transform-origin: center (default), so streaks extend equally
+ * in both directions. A future refinement could differentiate forward vs.
+ * backward direction by toggling transform-origin: top/bottom.
+ */
+.sky, .stars {
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.stars::after {
+  transition: opacity 280ms ease-out;
+}
 body.is-warping .sky,
 body.is-warping .stars {
-  filter: blur(1.6px);
-  transition: filter 220ms ease-out;
+  filter: url(#warp-blur);
 }
-body:not(.is-warping) .sky,
-body:not(.is-warping) .stars {
-  transition: filter 320ms ease-in;
+body.is-warping .stars {
+  transform: scaleY(3);
+}
+body.is-warping .stars::after {
+  opacity: 0.95;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -123,5 +162,9 @@ body:not(.is-warping) .stars {
   body.is-warping .sky,
   body.is-warping .stars {
     filter: none;
+    transform: none;
+  }
+  body.is-warping .stars::after {
+    opacity: 0.45;
   }
 }

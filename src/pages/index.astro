@@ -26,6 +26,21 @@ import Contact from "../components/Contact.astro";
 		/>
 	</head>
 	<body>
+		{/*
+		  SVG filter defs — provides the directional (vertical-only) Gaussian
+		  blur applied to the starfield during section warps. stdDeviation="0 12"
+		  means zero horizontal blur, 12 vertical blur, so each star smears
+		  along the axis of motion (vertical pan) like a real long-exposure
+		  through a panning telescope. Hidden via width/height 0; the filter
+		  remains usable through filter: url(#warp-blur).
+		*/}
+		<svg class="filter-defs" aria-hidden="true" width="0" height="0">
+			<defs>
+				<filter id="warp-blur">
+					<feGaussianBlur stdDeviation="0 12" />
+				</filter>
+			</defs>
+		</svg>
 		<Starfield />
 		<Header />
 		<main class="section-stack">
