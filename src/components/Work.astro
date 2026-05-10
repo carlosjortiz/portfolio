@@ -154,17 +154,14 @@ const experiences: Experience[] = [
     min-height: calc(100vh - 76px);
     display: grid;
     place-items: center;
-    padding: 80px 24px 80px;
+    padding: 40px 24px 80px;
   }
-  /*
-   * No fixed aspect-ratio on the work-stage — the timeline is content-driven.
-   * The chart-frame (absolutely positioned chrome) wraps whatever height the
-   * timeline ends up with.
-   */
   .work-stage {
     position: relative;
     width: 100%;
     max-width: 1240px;
+    aspect-ratio: 16 / 10;
+    max-height: 78vh;
     padding: 56px 64px 72px;
   }
 
