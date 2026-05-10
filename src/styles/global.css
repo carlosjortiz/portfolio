@@ -114,57 +114,29 @@
 }
 
 /*
- * Telescope-pan warp effect on the starfield during section transitions.
- * Toggled by the goTo() script via body.is-warping.
+ * Telescope-pan warp effect — stars themselves now live in a <canvas>
+ * (see Starfield.astro). The canvas handles trails, parallax, twinkle
+ * and direction-aware motion internally — no CSS effects on canvas.stars
+ * are needed (and would actually conflict, since transforming the canvas
+ * element distorts the rendered pixels including the trails).
  *
- * Three coordinated effects layered on top of each other to mimic what a
- * fast-panning telescope produces optically (vs. an isotropic blur which
- * would look like defocus, not motion):
- *
- *   1. DIRECTIONAL MOTION BLUR — SVG #warp-blur (stdDeviation="0 12") gives
- *      vertical-only Gaussian blur. Stars smear along the pan axis, like a
- *      long-exposure during a fast pan. Applied to .sky and .stars.
- *
- *   2. STAR-TRAIL ELONGATION — scaleY(3) on .stars stretches each star dot
- *      into a vertical line. The radial-gradient stars become elliptical,
- *      reading as light streaks rather than dots. Animates smoothly.
- *
- *   3. HALO BLOOM — .stars::after (the largest, blurred halo layer) bumps
- *      from opacity 0.45 to 0.95 during warp, making bright stars briefly
- *      "explode" with light as they smear — the same effect bright stars
- *      give in panned long-exposure astrophotography.
- *
- * scaleY uses transform-origin: center (default), so streaks extend equally
- * in both directions. A future refinement could differentiate forward vs.
- * backward direction by toggling transform-origin: top/bottom.
+ * The .sky layer is still pure CSS (static atmosphere gradient). We keep
+ * a subtle vertical-only blur on it during warp via the SVG filter, so
+ * the soft accent glows shimmer along the pan axis and complement the
+ * canvas star trails.
  */
-.sky, .stars {
-  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+.sky {
+  transition: filter 220ms ease-out;
 }
-.stars::after {
-  transition: opacity 280ms ease-out;
-}
-body.is-warping .sky,
-body.is-warping .stars {
+body.is-warping .sky {
   filter: url(#warp-blur);
-}
-body.is-warping .stars {
-  transform: scaleY(3);
-}
-body.is-warping .stars::after {
-  opacity: 0.95;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .section-stack > section {
     transition: none;
   }
-  body.is-warping .sky,
-  body.is-warping .stars {
+  body.is-warping .sky {
     filter: none;
-    transform: none;
-  }
-  body.is-warping .stars::after {
-    opacity: 0.45;
   }
 }

@@ -86,11 +86,12 @@ import Contact from "../components/Contact.astro";
 					if (targetIdx === currentIdx) return;
 
 					animating = true;
-					document.body.classList.add('is-warping');
-
 					const direction = targetIdx > currentIdx ? 'forward' : 'backward';
 					const exitPos = direction === 'forward' ? 'prev' : 'next';
 					const enterFromPos = direction === 'forward' ? 'next' : 'prev';
+
+					document.body.classList.add('is-warping');
+					document.body.classList.add(direction === 'forward' ? 'warp-fwd' : 'warp-bwd');
 
 					const outgoing = sections[currentIdx];
 					const incoming = sections[targetIdx];
@@ -123,7 +124,7 @@ import Contact from "../components/Contact.astro";
 					incoming.dataset.position = 'active';
 
 					setTimeout(() => {
-						document.body.classList.remove('is-warping');
+						document.body.classList.remove('is-warping', 'warp-fwd', 'warp-bwd');
 					}, TRANSITION_MS);
 
 					setTimeout(() => {

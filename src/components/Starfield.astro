@@ -1,23 +1,35 @@
 ---
 /*
- * Pure-CSS multi-color starfield.
+ * Canvas-based starfield with physical motion trails.
  *
- * Three layered, fixed-position backgrounds:
- *   - .sky           soft accent-tinted glows (atmosphere)
- *   - .stars         bright/medium stars in mixed stellar temperatures
- *                    (warm Sirius-white, cool Vega-blue, amber Arcturus)
- *   - .stars::before dim faint background field — texture, not sparkle
- *   - .stars::after  a few halo stars (largest, softly blurred)
+ * Architecture:
+ *   - .sky (CSS) — static atmosphere gradient. No per-pixel work needed.
+ *   - <canvas class="stars"> — particle simulation. Each star is an
+ *     independent point with its own color, size, magnitude, twinkle phase
+ *     and parallax depth.
  *
- * Star color philosophy: real stars are not pure white. Their hue
- * depends on surface temperature (Stefan–Boltzmann). Mixing warm/cool/amber
- * gives the sky depth and ties subtly to the accent palette without
- * shouting at the user.
+ * Idle behavior:
+ *   - Stars twinkle (sinusoidal alpha modulation per particle)
+ *   - Slow vertical drift (sub-pixel per second) for an "alive" feel
+ *
+ * Warp behavior (driven by body.is-warping + body.warp-fwd|warp-bwd):
+ *   - Stars accelerate vertically opposite to the section transition
+ *     (telescope pans down → stars move up), proportional to their
+ *     parallax (closer/brighter stars move faster — depth cue)
+ *   - Canvas is faded each frame via destination-out instead of cleared,
+ *     so previous star positions linger as motion trails behind the moving
+ *     star. Trail length is controlled by the fade alpha — peaks at warp,
+ *     near-clear at idle.
+ *
+ * Color philosophy preserved from the previous CSS implementation: warm
+ * (Sirius A/F-class), cool (Vega B-class), amber (Arcturus K-class) and
+ * dim background field. The rgba erase color is the body background, so
+ * trails fade back toward the page background, not toward black.
  */
 ---
 
 <div class="sky" aria-hidden="true"></div>
-<div class="stars" aria-hidden="true"></div>
+<canvas class="stars" aria-hidden="true"></canvas>
 
 <style>
   .sky {
@@ -29,109 +41,207 @@
       radial-gradient(ellipse 80% 60% at 70% 20%, color-mix(in oklch, var(--color-accent-secondary) 4%, transparent), transparent 60%),
       radial-gradient(ellipse 60% 50% at 20% 80%, color-mix(in oklch, var(--color-accent-primary) 3%, transparent), transparent 70%);
   }
-
-  .stars,
-  .stars::before,
-  .stars::after {
+  canvas.stars {
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 0;
-  }
-
-  /* ---------- mid layer · bright/medium stars, mixed temperatures ---------- */
-  .stars {
-    background-image:
-      /* warm Sirius-white (A/F-class) */
-      radial-gradient(1px 1px at 8% 14%,    var(--color-star-warm)  50%, transparent 100%),
-      radial-gradient(1.5px 1.5px at 22% 19%, var(--color-star-warm) 50%, transparent 100%),
-      radial-gradient(1px 1px at 34% 9%,    var(--color-star-warm)  50%, transparent 100%),
-      radial-gradient(1.5px 1.5px at 45% 77%, var(--color-star-warm) 50%, transparent 100%),
-      radial-gradient(1px 1px at 52% 24%,   var(--color-star-warm)  50%, transparent 100%),
-      radial-gradient(1px 1px at 69% 89%,   var(--color-star-warm)  50%, transparent 100%),
-      radial-gradient(1.5px 1.5px at 74% 36%, var(--color-star-warm) 50%, transparent 100%),
-      radial-gradient(1px 1px at 5% 73%,    var(--color-star-warm)  50%, transparent 100%),
-      radial-gradient(1px 1px at 89% 73%,   var(--color-star-warm)  50%, transparent 100%),
-
-      /* cool Vega-blue (B-class) */
-      radial-gradient(1px 1px at 15% 32%,   var(--color-star-cool)  50%, transparent 100%),
-      radial-gradient(1px 1px at 38% 43%,   var(--color-star-cool)  50%, transparent 100%),
-      radial-gradient(1px 1px at 63% 12%,   var(--color-star-cool)  50%, transparent 100%),
-      radial-gradient(1px 1px at 79% 60%,   var(--color-star-cool)  50%, transparent 100%),
-      radial-gradient(1px 1px at 93% 41%,   var(--color-star-cool)  50%, transparent 100%),
-
-      /* warm amber (K-class — sparse, stand-out) */
-      radial-gradient(1px 1px at 28% 67%,   var(--color-star-amber) 50%, transparent 100%),
-      radial-gradient(1px 1px at 58% 51%,   var(--color-star-amber) 50%, transparent 100%),
-      radial-gradient(1px 1px at 84% 22%,   var(--color-star-amber) 50%, transparent 100%);
-    opacity: 0.92;
-    animation: twinkle-fast 6s ease-in-out infinite alternate;
-  }
-
-  /* ---------- back layer · dim background field (texture) ---------- */
-  .stars::before {
-    content: "";
-    background-image:
-      radial-gradient(0.5px 0.5px at 3%  47%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 8%  12%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 11% 71%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 14% 38%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 17% 88%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 19% 25%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 24% 56%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 27% 9%,  var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 31% 79%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 36% 17%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 39% 92%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 42% 31%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 47% 64%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 50% 5%,  var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 54% 49%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 57% 81%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 60% 22%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 65% 67%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 68% 14%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 72% 86%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 76% 41%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 81% 7%,  var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 86% 60%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 91% 33%, var(--color-star-dim) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 96% 78%, var(--color-star-dim) 50%, transparent 100%);
-    opacity: 0.65;
-    animation: twinkle-slow 11s ease-in-out infinite alternate;
-  }
-
-  /* ---------- halo layer · a few largest stars softly blurred ---------- */
-  .stars::after {
-    content: "";
-    background-image:
-      radial-gradient(2px 2px at 24% 28%, var(--color-star-warm)  30%, transparent 70%),
-      radial-gradient(2px 2px at 61% 18%, var(--color-star-cool)  30%, transparent 70%),
-      radial-gradient(2px 2px at 76% 78%, var(--color-star-amber) 30%, transparent 70%),
-      radial-gradient(2px 2px at 12% 56%, var(--color-star-warm)  30%, transparent 70%);
-    opacity: 0.45;
-    filter: blur(0.4px);
-    animation: twinkle-halo 14s ease-in-out infinite alternate;
-  }
-
-  @keyframes twinkle-fast {
-    from { opacity: 0.78; }
-    to   { opacity: 1;    }
-  }
-  @keyframes twinkle-slow {
-    from { opacity: 0.5; }
-    to   { opacity: 0.75; }
-  }
-  @keyframes twinkle-halo {
-    from { opacity: 0.32; }
-    to   { opacity: 0.55; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .stars,
-    .stars::before,
-    .stars::after {
-      animation: none;
-    }
+    width: 100%;
+    height: 100%;
+    display: block;
   }
 </style>
+
+<script>
+  type Tribe = 'warm' | 'cool' | 'amber' | 'dim';
+
+  interface Star {
+    x: number;
+    y: number;
+    size: number;
+    tribe: Tribe;
+    magnitude: number;
+    twinklePhase: number;
+    twinkleSpeed: number;
+    driftY: number;
+    parallax: number;
+  }
+
+  const COLORS: Record<Tribe, string> = {
+    warm: '#F4E5C8',
+    cool: '#DBE7F5',
+    amber: '#E8B884',
+    dim: '#334155',
+  };
+
+  const canvas = document.querySelector<HTMLCanvasElement>('canvas.stars');
+  if (canvas) {
+    const ctx = canvas.getContext('2d', { alpha: true })!;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let w = 0;
+    let h = 0;
+    let stars: Star[] = [];
+    let lastT = performance.now();
+
+    // Warp state — driven by a time-based velocity curve that matches the
+    // derivative of the section CSS transition's easeOutQuart bezier
+    // (cubic-bezier(0.22, 1, 0.36, 1)). The derivative is approximately
+    // (1-t)^3, so stars decelerate in lock-step with the section's
+    // perceived motion. The total curve duration runs slightly longer
+    // than the section's TRANSITION_MS (650ms) so a brief residual of
+    // motion lingers after the section settles — the cinematic
+    // "secondary motion" beat without being distracting.
+    let warpProgress = 0;
+    let warpDir: 1 | -1 = 1;
+    let warpStartTime: number | null = null;
+    const WARP_DURATION_MS = 950; // 650ms section + 300ms tail
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas!.width = Math.floor(w * dpr);
+      canvas!.height = Math.floor(h * dpr);
+      canvas!.style.width = w + 'px';
+      canvas!.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      seed();
+    }
+
+    function seed() {
+      // Density: roughly one star per 9000 px². Floor at 50 so small viewports
+      // still feel populated. Halved from the initial seeding to keep the field
+      // feeling like a sky and not a particle demo.
+      const count = Math.max(50, Math.floor((w * h) / 9000));
+      stars = [];
+      for (let i = 0; i < count; i++) {
+        const r = Math.random();
+        let tribe: Tribe;
+        let size: number;
+        let magnitude: number;
+        if (r < 0.5) {
+          tribe = 'dim';
+          size = 0.5 + Math.random() * 0.6;
+          magnitude = 0.35 + Math.random() * 0.15;
+        } else if (r < 0.72) {
+          tribe = 'warm';
+          size = 1 + Math.random() * 0.9;
+          magnitude = 0.55 + Math.random() * 0.25;
+        } else if (r < 0.88) {
+          tribe = 'cool';
+          size = 0.9 + Math.random() * 1.1;
+          magnitude = 0.55 + Math.random() * 0.25;
+        } else {
+          tribe = 'amber';
+          size = 1.1 + Math.random() * 1.3;
+          magnitude = 0.6 + Math.random() * 0.25;
+        }
+        stars.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          size,
+          tribe,
+          magnitude,
+          twinklePhase: Math.random() * Math.PI * 2,
+          twinkleSpeed: 0.3 + Math.random() * 1.2,
+          driftY: (Math.random() - 0.5) * 1.5,
+          // Bigger stars feel "closer" so they take more parallax during
+          // warp — gives the field perceptible depth instead of the whole
+          // sky moving as one slab.
+          parallax: 0.5 + size * 0.7,
+        });
+      }
+      ctx.clearRect(0, 0, w, h);
+    }
+
+    function readWarpTarget(): number {
+      const isWarping = document.body.classList.contains('is-warping');
+      if (document.body.classList.contains('warp-fwd')) warpDir = 1;
+      else if (document.body.classList.contains('warp-bwd')) warpDir = -1;
+      return isWarping ? 1 : 0;
+    }
+
+    function drawStaticFrame() {
+      ctx.clearRect(0, 0, w, h);
+      for (const s of stars) {
+        ctx.fillStyle = COLORS[s.tribe];
+        ctx.globalAlpha = s.magnitude * 0.85;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function tick(now: DOMHighResTimeStamp) {
+      const dt = Math.min(50, now - lastT) / 1000;
+      lastT = now;
+
+      const target = readWarpTarget();
+      // Time-based velocity curve matched to the section's easeOutQuart.
+      // warpProgress = (1 - elapsed/duration)^3, mirroring the derivative
+      // of the section's CSS bezier. Stars peak at warp start and decay
+      // through WARP_DURATION_MS — slightly past the section's settle so
+      // a 100ms residual lingers as cinematic momentum.
+      //
+      // We continue running the curve for the FULL duration even after
+      // body.is-warping is removed (at TRANSITION_MS = 650ms), so the
+      // tail plays out instead of snapping. Once elapsed >= duration,
+      // we reset the start time so the next warp begins fresh.
+      const stillRunning =
+        warpStartTime !== null && now - warpStartTime < WARP_DURATION_MS;
+      if (target === 1 || stillRunning) {
+        if (warpStartTime === null) warpStartTime = now;
+        const elapsed = now - warpStartTime;
+        const linear = Math.min(1, elapsed / WARP_DURATION_MS);
+        warpProgress = Math.pow(1 - linear, 3);
+      } else {
+        warpProgress = 0;
+        warpStartTime = null;
+      }
+
+      // Frame fade — destination-out erases previous pixels by their alpha.
+      // Higher source alpha = more aggressive clear. We want long trails at
+      // peak warp (low erase alpha) and near-clean frames at idle.
+      const eraseAlpha = 0.1 + (1 - warpProgress) * 0.85;
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = `rgba(0, 0, 0, ${eraseAlpha})`;
+      ctx.fillRect(0, 0, w, h);
+      ctx.globalCompositeOperation = 'source-over';
+
+      // Vertical warp velocity in px/sec at peak. parallax scales by depth.
+      const warpSpeedBase = 1400;
+
+      for (const s of stars) {
+        s.twinklePhase += s.twinkleSpeed * dt;
+        const twinkle = 0.7 + 0.3 * Math.sin(s.twinklePhase);
+
+        s.y += s.driftY * dt;
+        s.y += -warpDir * warpSpeedBase * s.parallax * warpProgress * dt;
+
+        // Wrap vertically — keep star count constant
+        if (s.y < -10) s.y = h + 10;
+        if (s.y > h + 10) s.y = -10;
+
+        ctx.fillStyle = COLORS[s.tribe];
+        ctx.globalAlpha = twinkle * s.magnitude;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    if (reduceMotion) {
+      drawStaticFrame();
+    } else {
+      requestAnimationFrame(tick);
+    }
+  }
+</script>
