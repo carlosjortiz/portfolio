@@ -351,9 +351,8 @@ const platforms: Platform[] = [
     height: 2px;
     border-radius: 50%;
     background: var(--color-star-cool);
-    /* Percentage-based offsets so the dot lands ON the curved edge of
-       the circular glyph at any size. The previous `4px` corner offset
-       worked for rounded squares but fell outside the circle's curve. */
+    /* Percentage offsets so the dot lands ON the curved edge of the
+       circular glyph at any size (px corner offsets fall outside the curve). */
     top: 18%;
     right: 18%;
     box-shadow: 0 0 4px var(--color-star-cool);

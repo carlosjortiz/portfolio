@@ -18,7 +18,6 @@ type Project = {
   hoverSide: "left" | "right";
 };
 
-// Three planet slots — two real projects + one placeholder until Carlos decides.
 // Planet visuals (treew = nebula, gsi = ringed giant, ati = pulsar) are
 // duplicated from Work.astro because Astro scopes styles per component.
 const projects: Project[] = [
@@ -116,16 +115,12 @@ const projects: Project[] = [
                 )}
               </div>
 
-              {/* Default state: just the project name centered below the planet. */}
               <div class="hud">
                 <h3 class="hud-name">{p.name}</h3>
               </div>
 
-              {/* Hover state: diagonal leader + readout (name / repo / desc / stack).
-                  Container is 380×220 — taller than Work's 380×150 callout so the
-                  bottom row fits desc + wrapped stack chips. The diagonal anchors
-                  at the container's bottom corner (planet center); the horizontal
-                  line stays at y=95 so the top row keeps its 91px height. */}
+              {/* Container is 380×220. Diagonal anchors at the bottom corner
+                  (planet center); horizontal line stays at y=95. */}
               <div class:list={["hud-callout", `hover-${p.hoverSide}`]} aria-hidden="true">
                 <svg class="hc-leader" viewBox="0 0 380 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                   {p.hoverSide === "left" ? (
@@ -596,17 +591,15 @@ const projects: Project[] = [
 
   /* ============================================================
      HUD-CALLOUT — diagonal leader + readout (hover state)
-     Container is 380×150; one bottom corner anchored at the
+     Container is 380×220; one bottom corner anchored at the
      planet center via hover-left / hover-right.
      ============================================================ */
   .hud-callout {
     position: absolute;
     bottom: 50%;
     width: 380px;
-    /* 220px (vs Work's 150px) so the bottom row fits desc + wrapped chips and
-       the .hud-callout bounding box always contains the full hover hit area —
-       otherwise chips overflow past y=150 and the cursor falls into "dead
-       space" outside .xstar/.hud-callout, dropping the :hover. */
+    /* Height must contain the full hover hit area; if chips overflow past
+       this box, the cursor falls into dead space and drops :hover. */
     height: 220px;
     pointer-events: none;
     opacity: 0;
@@ -614,27 +607,17 @@ const projects: Project[] = [
     z-index: 6;
   }
 
-  /*
-   * Dead-zone fix: pointer-events does NOT inherit, so children of an
-   * inert parent still catch mouse events on their own. The repo link,
-   * chips, name, etc. each have their own default `auto`, which means
-   * the cursor passing through their (invisible) bounding boxes was
-   * triggering .xstar:hover from outside the planet.
-   *
-   * Force every descendant of the callout AND the default name HUD to
-   * be inert by default. Only the planet body itself drives the hover
-   * trigger — exactly what the user sees as "the planet area".
-   */
+  /* pointer-events does NOT inherit, so descendants with default `auto`
+     keep catching mouse events through their invisible bounding boxes and
+     ghost-trigger .xstar:hover. Force every descendant inert; only the
+     planet body drives the hover trigger. */
   .hud *,
   .hud-callout * {
     pointer-events: none;
   }
 
-  /*
-   * On hover, the .hud-callout container receives auto (handled below)
-   * so its bounding box keeps the hover alive. The repo link is the
-   * only interactive descendant — re-enable just that one.
-   */
+  /* Re-enable the only interactive descendant. The .hud-callout container
+     itself receives `auto` on hover (rule below) to keep hover alive. */
   .xstar:hover .hc-repo-out,
   .xstar:focus-within .hc-repo-out {
     pointer-events: auto;
@@ -750,7 +733,6 @@ const projects: Project[] = [
   }
   .hc-repo-out:hover .arrow { transform: translateX(2px); }
 
-  /* Bottom row: below the horizontal line. Description + stack chips. */
   .hc-row-bottom {
     position: absolute;
     top: 101px;
@@ -838,10 +820,6 @@ const projects: Project[] = [
     100% { width: 250px; height: 250px; opacity: 0;    }
   }
 
-  /* ============================================================
-     FOCUS-BLUR (in-section) — when one planet is hovered, blur
-     and dim the other planet slots inside the projects-stage.
-     ============================================================ */
   .planet-slot {
     transition: filter 360ms ease, opacity 360ms ease;
   }
@@ -942,16 +920,9 @@ const projects: Project[] = [
 </style>
 
 <style is:global>
-  /*
-   * Page-wide focus-blur when a Projects planet is hovered. Mirrors
-   * the Work section's behavior: dim/blur the starfield and every
-   * other section's stage contents (excluding chart-frames, which
-   * are foreground "telescope chrome" and stay sharp).
-   *
-   * The Projects section's own internal blur (other planet-slots)
-   * is handled by the scoped block above — that's why .projects-stage
-   * is excluded from the page-level rules below.
-   */
+  /* Page-wide focus-blur on planet hover: dim starfield and other sections'
+     stages, excluding chart-frames (kept sharp) and .projects-stage (handled
+     by the scoped in-section blur above). */
   body:has(.projects-stage .xstar:hover) > .sky,
   body:has(.projects-stage .xstar:hover) > .stars,
   body:has(.projects-stage .xstar:focus-within) > .sky,

@@ -1,30 +1,13 @@
 ---
 /*
- * Canvas-based starfield with physical motion trails.
+ * Canvas particle simulation. Each star carries color, size, magnitude,
+ * twinkle phase and parallax depth.
  *
- * Architecture:
- *   - .sky (CSS) — static atmosphere gradient. No per-pixel work needed.
- *   - <canvas class="stars"> — particle simulation. Each star is an
- *     independent point with its own color, size, magnitude, twinkle phase
- *     and parallax depth.
- *
- * Idle behavior:
- *   - Stars twinkle (sinusoidal alpha modulation per particle)
- *   - Slow vertical drift (sub-pixel per second) for an "alive" feel
- *
- * Warp behavior (driven by body.is-warping + body.warp-fwd|warp-bwd):
- *   - Stars accelerate vertically opposite to the section transition
- *     (telescope pans down → stars move up), proportional to their
- *     parallax (closer/brighter stars move faster — depth cue)
- *   - Canvas is faded each frame via destination-out instead of cleared,
- *     so previous star positions linger as motion trails behind the moving
- *     star. Trail length is controlled by the fade alpha — peaks at warp,
- *     near-clear at idle.
- *
- * Color philosophy preserved from the previous CSS implementation: warm
- * (Sirius A/F-class), cool (Vega B-class), amber (Arcturus K-class) and
- * dim background field. The rgba erase color is the body background, so
- * trails fade back toward the page background, not toward black.
+ * Warp (body.is-warping + body.warp-fwd|warp-bwd): stars accelerate
+ * vertically opposite to the section transition, scaled by parallax
+ * (depth cue). Canvas is faded via destination-out instead of cleared,
+ * so previous positions linger as motion trails — fade alpha peaks at
+ * warp, near-clear at idle.
  */
 ---
 
@@ -84,14 +67,10 @@
     let stars: Star[] = [];
     let lastT = performance.now();
 
-    // Warp state — driven by a time-based velocity curve that matches the
-    // derivative of the section CSS transition's easeOutQuart bezier
-    // (cubic-bezier(0.22, 1, 0.36, 1)). The derivative is approximately
-    // (1-t)^3, so stars decelerate in lock-step with the section's
-    // perceived motion. The total curve duration runs slightly longer
-    // than the section's TRANSITION_MS (650ms) so a brief residual of
-    // motion lingers after the section settles — the cinematic
-    // "secondary motion" beat without being distracting.
+    // Velocity curve matches the derivative of the section's easeOutQuart
+    // bezier (cubic-bezier(0.22, 1, 0.36, 1)) ≈ (1-t)^3, so stars decelerate
+    // in lock-step with the section's perceived motion. Total duration runs
+    // slightly past TRANSITION_MS so a residual lingers after settle.
     let warpProgress = 0;
     let warpDir: 1 | -1 = 1;
     let warpStartTime: number | null = null;
@@ -110,9 +89,7 @@
     }
 
     function seed() {
-      // Density: roughly one star per 9000 px². Floor at 50 so small viewports
-      // still feel populated. Halved from the initial seeding to keep the field
-      // feeling like a sky and not a particle demo.
+      // Density: ~1 star per 9000 px². Floor at 50 for small viewports.
       const count = Math.max(50, Math.floor((w * h) / 9000));
       stars = [];
       for (let i = 0; i < count; i++) {
@@ -146,9 +123,7 @@
           twinklePhase: Math.random() * Math.PI * 2,
           twinkleSpeed: 0.3 + Math.random() * 1.2,
           driftY: (Math.random() - 0.5) * 1.5,
-          // Bigger stars feel "closer" so they take more parallax during
-          // warp — gives the field perceptible depth instead of the whole
-          // sky moving as one slab.
+          // Bigger stars take more parallax during warp — depth cue.
           parallax: 0.5 + size * 0.7,
         });
       }
@@ -179,16 +154,8 @@
       lastT = now;
 
       const target = readWarpTarget();
-      // Time-based velocity curve matched to the section's easeOutQuart.
-      // warpProgress = (1 - elapsed/duration)^3, mirroring the derivative
-      // of the section's CSS bezier. Stars peak at warp start and decay
-      // through WARP_DURATION_MS — slightly past the section's settle so
-      // a 100ms residual lingers as cinematic momentum.
-      //
-      // We continue running the curve for the FULL duration even after
-      // body.is-warping is removed (at TRANSITION_MS = 650ms), so the
-      // tail plays out instead of snapping. Once elapsed >= duration,
-      // we reset the start time so the next warp begins fresh.
+      // Run the curve for the FULL duration even after body.is-warping is
+      // removed at TRANSITION_MS, so the tail plays out instead of snapping.
       const stillRunning =
         warpStartTime !== null && now - warpStartTime < WARP_DURATION_MS;
       if (target === 1 || stillRunning) {
@@ -201,9 +168,8 @@
         warpStartTime = null;
       }
 
-      // Frame fade — destination-out erases previous pixels by their alpha.
-      // Higher source alpha = more aggressive clear. We want long trails at
-      // peak warp (low erase alpha) and near-clean frames at idle.
+      // destination-out erases previous pixels by their alpha. Higher source
+      // alpha = more aggressive clear (short trails); low alpha = long trails.
       const eraseAlpha = 0.1 + (1 - warpProgress) * 0.85;
       ctx.globalCompositeOperation = 'destination-out';
       ctx.fillStyle = `rgba(0, 0, 0, ${eraseAlpha})`;
@@ -220,7 +186,6 @@
         s.y += s.driftY * dt;
         s.y += -warpDir * warpSpeedBase * s.parallax * warpProgress * dt;
 
-        // Wrap vertically — keep star count constant
         if (s.y < -10) s.y = h + 10;
         if (s.y > h + 10) s.y = -10;
 

@@ -9,7 +9,6 @@ type Experience = {
   description: string;
 };
 
-// Top-down: most recent at the top, oldest at the bottom.
 // The last entry has no trail beneath it (no meteor below to point to).
 const experiences: Experience[] = [
   {
@@ -214,8 +213,7 @@ const experiences: Experience[] = [
   }
 
   /* ============================================================
-     TRAIL — hairline beam with cyan→orange vertical gradient and
-     a soft halo. The descending drop rides on top of it.
+     TRAIL
      ============================================================ */
   .trail-wrap {
     width: 4px;
@@ -237,11 +235,6 @@ const experiences: Experience[] = [
     overflow: visible;
     pointer-events: none;
     z-index: 1;
-    /*
-     * Vertical gradient narrating the career arc: cyan (--color-accent-secondary)
-     * at the top fades through cool/warm into orange (--color-accent-primary)
-     * and amber, dissolving to transparent right where the next meteor begins.
-     */
     background: linear-gradient(
       180deg,
       rgba(34, 211, 238, 0.95) 0%,
@@ -265,7 +258,6 @@ const experiences: Experience[] = [
     opacity: 0.45;
   }
 
-  /* Descending shockwave — the heartbeat travelling along the beam. */
   .drop {
     position: absolute;
     left: 50%;
@@ -289,11 +281,10 @@ const experiences: Experience[] = [
       drop-fall 3s linear infinite,
       drop-tint 3s linear infinite;
   }
-  /* Stagger the loops so the three trails breathe asynchronously. */
+  /* Stagger so the three trails breathe asynchronously. */
   .drop.delay-1 { animation-delay: -1s, -1s; }
   .drop.delay-2 { animation-delay: -2s, -2s; }
 
-  /* Micro-comet tail trailing the drop, painted in the local trail color. */
   .drop::before {
     content: "";
     position: absolute;
@@ -343,11 +334,8 @@ const experiences: Experience[] = [
     padding-top: 4px;
     padding-bottom: 16px;
   }
-  /*
-   * Header row: company on the left (prominent cyan), date pushed to the
-   * right at the same baseline. flex-wrap kicks in on narrow widths so the
-   * date drops to its own line instead of squeezing the company name.
-   */
+  /* flex-wrap so the date drops to its own line on narrow widths
+     instead of squeezing the company name. */
   .row-header {
     display: flex;
     align-items: baseline;
@@ -415,13 +403,8 @@ const experiences: Experience[] = [
 </style>
 
 <style is:global>
-  /*
-   * Shared transition setup for the page-wide focus-blur effects driven
-   * by other sections (Projects today; Hero/Contact later if they add
-   * their own hover triggers). The actual filter/opacity changes live
-   * in each driving section's own <style is:global> block — this rule
-   * just ensures those changes fade smoothly across the page chrome.
-   */
+  /* Shared transition for page-wide focus-blur. The actual filter/opacity
+     changes live in each driving section's own <style is:global> block. */
   .sky,
   .stars,
   .hero-stage > *:not(.chart-frame),

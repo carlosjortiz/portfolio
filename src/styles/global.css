@@ -114,16 +114,9 @@
 }
 
 /*
- * Telescope-pan warp effect — stars themselves now live in a <canvas>
- * (see Starfield.astro). The canvas handles trails, parallax, twinkle
- * and direction-aware motion internally — no CSS effects on canvas.stars
- * are needed (and would actually conflict, since transforming the canvas
- * element distorts the rendered pixels including the trails).
- *
- * The .sky layer is still pure CSS (static atmosphere gradient). We keep
- * a subtle vertical-only blur on it during warp via the SVG filter, so
- * the soft accent glows shimmer along the pan axis and complement the
- * canvas star trails.
+ * Trails/parallax/twinkle are handled inside canvas.stars (see Starfield);
+ * transforming that canvas would distort the rendered trails, so it stays
+ * untouched. .sky gets the vertical-only blur during warp via SVG filter.
  */
 .sky {
   transition: filter 220ms ease-out;

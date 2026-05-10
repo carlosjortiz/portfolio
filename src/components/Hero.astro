@@ -51,11 +51,8 @@ import Constellation from "./Constellation.astro";
     pointer-events: none;
   }
   /*
-   * Only the CTAs (the actual interactive controls) re-enable pointer
-   * events. The headline and lede stay pointer-events:none so they don't
-   * eat hovers on the constellation stars sitting underneath them — the
-   * h1's bounding box reaches across most of the hero-stage horizontally
-   * and was masking the left half of the SCADA icon, among others.
+   * Only the CTAs re-enable pointer events; the headline and lede stay
+   * inert so they don't mask hovers on the constellation stars underneath.
    */
   .hero-text .cta-row,
   .hero-text .cta {

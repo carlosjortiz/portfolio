@@ -17,7 +17,6 @@ import Contact from "../components/Contact.astro";
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Carlos J. Ortiz &mdash; Observatory</title>
-		{/* Google Fonts loaded externally on purpose: self-hosting will come later. */}
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
@@ -26,14 +25,7 @@ import Contact from "../components/Contact.astro";
 		/>
 	</head>
 	<body>
-		{/*
-		  SVG filter defs — provides the directional (vertical-only) Gaussian
-		  blur applied to the starfield during section warps. stdDeviation="0 12"
-		  means zero horizontal blur, 12 vertical blur, so each star smears
-		  along the axis of motion (vertical pan) like a real long-exposure
-		  through a panning telescope. Hidden via width/height 0; the filter
-		  remains usable through filter: url(#warp-blur).
-		*/}
+		{/* stdDeviation="0 12": zero horizontal, 12 vertical — directional blur applied via filter: url(#warp-blur). */}
 		<svg class="filter-defs" aria-hidden="true" width="0" height="0">
 			<defs>
 				<filter id="warp-blur">
@@ -52,14 +44,9 @@ import Contact from "../components/Contact.astro";
 		<ViewerFrame />
 		<script>
 			/*
-			 * Section-swap navigation.
-			 *
-			 * All four sections live inside .section-stack and use
-			 * data-position="active|prev|next" to pick their slot.
-			 * Wheel, keyboard, touch and header anchor clicks dispatch
-			 * goTo(targetIdx) — siblings between the outgoing and
-			 * incoming pair are repositioned silently via .no-transition
-			 * so only the visible pair animates.
+			 * Sections use data-position="active|prev|next" to pick their slot.
+			 * Siblings between outgoing and incoming snap silently via
+			 * .no-transition so only the visible pair animates.
 			 */
 			const stack = document.querySelector<HTMLElement>('.section-stack');
 			if (stack) {
@@ -75,7 +62,6 @@ import Contact from "../components/Contact.astro";
 				const WHEEL_THRESHOLD = 30;
 				const TOUCH_THRESHOLD = 50;
 
-				// Initial state: first section active, the rest stacked below.
 				sections.forEach((sec, i) => {
 					sec.dataset.position = i === 0 ? 'active' : 'next';
 				});
@@ -96,14 +82,12 @@ import Contact from "../components/Contact.astro";
 					const outgoing = sections[currentIdx];
 					const incoming = sections[targetIdx];
 
-					// Snap intermediate sections silently to their final slot.
 					sections.forEach((sec, i) => {
 						if (sec === outgoing || sec === incoming) return;
 						sec.classList.add('no-transition');
 						sec.dataset.position = i < targetIdx ? 'prev' : 'next';
 					});
 
-					// Snap the incoming section to its starting slot if needed.
 					if (incoming.dataset.position !== enterFromPos) {
 						incoming.classList.add('no-transition');
 						incoming.dataset.position = enterFromPos;
