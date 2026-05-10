@@ -1,7 +1,19 @@
 ---
 import ChartFrame from "./ChartFrame.astro";
 
-const platforms = [
+type Platform = {
+  mark: string;
+  name: string;
+  handle: string;
+  href: string;
+  coord: string;
+  // When set, the link is treated as a download (PDF artifact) instead of
+  // an external profile. The string becomes the filename the browser
+  // suggests when saving.
+  download?: string;
+};
+
+const platforms: Platform[] = [
   {
     mark: "gh",
     name: "GitHub",
@@ -29,6 +41,22 @@ const platforms = [
     handle: "@krlosjortiz",
     href: "https://t.me/krlosjortiz",
     coord: "17h 55m · −22°",
+  },
+  {
+    mark: "EN",
+    name: "CV (English)",
+    handle: "PDF · Download",
+    href: "/CV_EN%20-%20Ing.%20Ortiz.pdf",
+    coord: "19h 12m · +08°",
+    download: "Carlos_J_Ortiz_CV_EN.pdf",
+  },
+  {
+    mark: "ES",
+    name: "CV (Español)",
+    handle: "PDF · Descarga",
+    href: "/CV_ES%20-%20Ing.%20Ortiz.pdf",
+    coord: "19h 48m · +12°",
+    download: "Carlos_J_Ortiz_CV_ES.pdf",
   },
 ];
 ---
@@ -82,8 +110,9 @@ const platforms = [
           <a
             class={`star tribe-sw mag-${i % 2 === 0 ? '1' : '2'} sz-${i % 2 === 0 ? 'xl' : 'lg'} platform`}
             href={p.href}
-            target="_blank"
-            rel="noopener noreferrer"
+            target={p.download ? undefined : "_blank"}
+            rel={p.download ? undefined : "noopener noreferrer"}
+            download={p.download}
             aria-label={p.name}
           >
             <span class="glyph">{p.mark}<span class="twinkle"></span></span>
@@ -148,9 +177,10 @@ const platforms = [
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 56px;
+    flex-wrap: wrap;
+    gap: 44px;
+    row-gap: 28px;
     margin: 0 auto;
-    height: 80px;
   }
 
   .platforms .star {
@@ -342,7 +372,7 @@ const platforms = [
       max-height: none;
     }
     .star.hide-sm { display: none; }
-    .platforms { gap: 28px; }
+    .platforms { gap: 24px; row-gap: 20px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
