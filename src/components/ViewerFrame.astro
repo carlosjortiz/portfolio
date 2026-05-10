@@ -1,0 +1,79 @@
+---
+/*
+ * Persistent foreground layer — the "viewer chrome" that stays fixed
+ * to the viewport while sections swap underneath. Mirrors the geometry
+ * of every section's stage (1240px / 16:10 / 78vh) so the corners line
+ * up perfectly with whichever section is currently on screen.
+ *
+ * What lives here: the 4 stage corners and the copyright signature.
+ * What does NOT live here: per-section ticks, RA/Dec coords and label
+ * (those still belong inside ChartFrame because they change per section).
+ */
+---
+
+<div class="viewer-frame" aria-hidden="true">
+  <div class="viewer-stage">
+    <span class="corner tl"></span>
+    <span class="corner tr"></span>
+    <span class="corner bl"></span>
+    <span class="corner br"></span>
+    <span class="chart-meta"><span class="mark">&copy;</span> 2025 CARLOS J. ORTIZ</span>
+  </div>
+</div>
+
+<style>
+  .viewer-frame {
+    position: fixed;
+    /*
+     * top:76px clears the header. The remaining padding mirrors every
+     * section's `padding: 40px 24px 80px;` so the centered stage lands
+     * at the SAME viewport coordinates as a section's chart-stage.
+     */
+    inset: 76px 0 0 0;
+    pointer-events: none;
+    z-index: 6;
+    display: grid;
+    place-items: center;
+    padding: 40px 24px 80px;
+  }
+  .viewer-stage {
+    position: relative;
+    width: 100%;
+    max-width: 1240px;
+    aspect-ratio: 16 / 10;
+    max-height: 78vh;
+  }
+
+  .corner {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--color-border);
+    opacity: 0.7;
+  }
+  .corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+  .corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+  .corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+  .corner.br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+  .chart-meta {
+    position: absolute;
+    bottom: -28px;
+    right: 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--color-text-muted);
+    opacity: 0.85;
+  }
+  .chart-meta .mark {
+    font-size: 14px;
+    vertical-align: -0.08em;
+    letter-spacing: 0;
+    margin-right: 2px;
+  }
+
+  @media (max-width: 760px) {
+    .chart-meta { font-size: 9px; }
+  }
+</style>
